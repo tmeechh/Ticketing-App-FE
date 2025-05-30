@@ -1,12 +1,12 @@
 
 import React, { useState, useEffect } from 'react';
-import Navbar from '../../components/Navbar';
-import Footer from '../../components/Footer';
+import Navbar from '@/components/Navbar';
+import Footer from '@/components/Footer';
 import TicketList from './components/TicketList';
 import HeroSection from './components/HeroSection';
 import TicketModal from './components/TicketModal';
-import useTicketStore from '../../store/useTicketStore';
-import useAuthStore from '../../store/authStore';
+import useTicketStore from '@/store/useTicketStore';
+import useAuthStore from '@/store/authStore';
 
 const MyTicketsPage = () => {
   const [activeTab, setActiveTab] = useState('upcoming');

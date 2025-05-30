@@ -1,5 +1,5 @@
-import React, { useState } from 'react';
-import { useNavigate } from 'react-router-dom';
+import React, { useEffect, useState } from 'react';
+import { useNavigate, useParams } from 'react-router-dom';
 import Navbar from '@/components/Navbar';
 import Footer from '@/components/Footer';
 import { Calendar, Clock, MapPin, Upload, Loader } from 'lucide-react';
@@ -7,11 +7,15 @@ import useEventStore from '@/store/useEventStore';
 import useAuthStore from '@/store/authStore';
 import { toast } from 'sonner';
 
-const CreateEvent = () => {
+const UpdateEvent = () => {
+  const { id } = useParams();
+  const { currentEvent, fetchEventById, updateEvent, isLoading } =
+    useEventStore();
+  const {user, isAuthenticated } = useAuthStore();
   const navigate = useNavigate();
-  const { createEvent, isLoading } = useEventStore();
-  const { user, isAuthenticated } = useAuthStore();
 
+  // State initialization
+  const [isInitializing, setIsInitializing] = useState(true);
   const [formData, setFormData] = useState({
     title: '',
     description: '',
@@ -22,165 +26,225 @@ const CreateEvent = () => {
     location: '',
     address: '',
     organizer: '',
-    ticketTypes: {
-      general: '',
-      vip: '',
-      premium: '',
-    },
-    ticketsAvailable: {
-      general: '',
-      vip: '',
-      premium: '',
-    },
+    ticketTypes: { general: '', vip: '', premium: '' },
+    ticketsAvailable: { general: '', vip: '', premium: '' },
   });
-
   const [images, setImages] = useState([]);
   const [previewUrls, setPreviewUrls] = useState([]);
-
   const [time, setTime] = useState('');
   const [isAm, setIsAm] = useState(true);
+  const [deletedImages, setDeletedImages] = useState([]);
+
+  
+
+  // Load event data
+  useEffect(() => {
+    const loadEvent = async () => {
+      try {
+        await fetchEventById(id);
+      } finally {
+        setIsInitializing(false);
+      }
+    };
+    loadEvent();
+  }, [id, fetchEventById]);
+
+  // if (!user?._id) {
+  //   throw new Error('User not authenticated');
+  // }
+
+  // Initialize form with current event data
+  useEffect(() => {
+    if (currentEvent) {
+      setFormData({
+        title: currentEvent.title || '',
+        description: currentEvent.description || '',
+        fullDescription: currentEvent.fullDescription || '',
+        category: currentEvent.category || '',
+        date: currentEvent.date?.split('T')[0] || '',
+        time: currentEvent.time || '',
+        location: currentEvent.location || '',
+        address: currentEvent.address || '',
+        organizer: currentEvent.organizer || '',
+        organizerId: currentEvent.organizerId || '',
+         // ✅ Remove Object.fromEntries() — ticketPrices is already an object
+      ticketTypes: currentEvent.ticketPrices || { general: '', vip: '', premium: '' },
+      // ✅ Same for ticketsAvailable
+      ticketsAvailable: currentEvent.ticketsAvailable || { general: '', vip: '', premium: '' },
+      });
+
+      // Initialize time and AM/PM
+      if (currentEvent.time) {
+        // Convert stored "HH:MM AM/PM" to 24-hour format for the input
+        const [timePart, period] = currentEvent.time.split(' ');
+        let [hours, minutes] = timePart.split(':');
+        
+        if (period === 'PM' && hours !== '12') {
+          hours = String(Number(hours) + 12);
+        } else if (period === 'AM' && hours === '12') {
+          hours = '00';
+        }
+        
+        setTime(`${hours}:${minutes}`);
+        setIsAm(period === 'AM');
+      }
+      setPreviewUrls(currentEvent.images || []);
+    }
+  }, [currentEvent]);
+
+  // Image handling
+  const handleImageChange = (e) => {
+    const files = Array.from(e.target.files);
+    if (!files.length) return;
+    
+    if (previewUrls.length + files.length > 4) {
+      toast.error('Maximum 4 images allowed');
+      return;
+    }
+  
+    // Clear the file input to allow re-uploads of same files
+    e.target.value = '';
+  
+    const newImages = [...images, ...files];
+    setImages(newImages);
+  
+    Promise.all(
+      files.map(file => {
+        return new Promise((resolve) => {
+          const reader = new FileReader();
+          reader.onload = () => resolve(reader.result);
+          reader.readAsDataURL(file);
+        });
+      })
+    ).then(newUrls => {
+      setPreviewUrls(prev => [...prev, ...newUrls]);
+    });
+  };
 
   const handleTimeChange = (e) => {
-    setTime(e.target.value);
+    const value = e.target.value;
+    setTime(value);
+    
+    // Convert 24-hour format to AM/PM for formData
+    let [hours, minutes] = value.split(':');
+    hours = parseInt(hours, 10);
+    const period = hours >= 12 ? 'PM' : 'AM';
+    hours = hours % 12 || 12; // Convert to 12-hour format
+    
+    setFormData(prev => ({
+      ...prev,
+      time: `${hours}:${minutes} ${period}`
+    }));
+  };
+
+
+  const removeImage = (index) => {
+    const urlToRemove = previewUrls[index];
+    
+    // If it's an existing image (not a blob), add to deleted images
+    if (!urlToRemove.startsWith('blob:')) {
+      setDeletedImages(prev => [...prev, urlToRemove]);
+    }
+    
+    // Remove from preview URLs
+    setPreviewUrls(prev => prev.filter((_, i) => i !== index));
+    
+    // If it was a newly uploaded file (blob), remove from images array
+    if (urlToRemove.startsWith('blob:')) {
+      setImages(prev => 
+        prev.filter((_, i) => i !== index - (previewUrls.length - images.length))
+      );
+    }
+  };
+
+  // Form handlers
+  const handleChange = (e) => {
+    const { name, value } = e.target;
+    setFormData((prev) => ({ ...prev, [name]: value }));
+  };
+
+  const handleTicketChange = (field, type, value) => {
+    setFormData((prev) => ({
+      ...prev,
+      [field]: { ...prev[field], [type]: value === '' ? 0 : Number(value) },
+    }));
   };
 
   const handleAmPmChange = () => {
-    setIsAm(!isAm);
-  };
-
-  // Format for backend (combines time + AM/PM)
-  const formatTimeForBackend = () => {
-    if (!time) return '';
-    return `${time} ${isAm ? 'AM' : 'PM'}`;
-  };
-
-  // Handle image selection
-  const handleImageChange = (e) => {
-    const files = Array.from(e.target.files);
-
-    // Append new files to existing ones
-    setImages((prevImages) => [...prevImages, ...files]);
-
-    // Also append new previews
-    const newPreviews = files.map((file) => {
-      return new Promise((resolve, reject) => {
-        const reader = new FileReader();
-        reader.onload = () => resolve(reader.result);
-        reader.onerror = reject;
-        reader.readAsDataURL(file);
-      });
-    });
-
-    Promise.all(newPreviews).then((newPreviewUrls) => {
-      setPreviewUrls((prevPreviews) => [...prevPreviews, ...newPreviewUrls]);
-    });
-  };
-
-  // Handle form input changes
-  const handleChange = (e) => {
-    const { name, value } = e.target;
-    setFormData((prev) => ({
+    if (!time) return;
+    
+    const newIsAm = !isAm;
+    setIsAm(newIsAm);
+    
+    let [hours, minutes] = time.split(':');
+    hours = parseInt(hours, 10);
+    
+    // Convert between AM/PM while maintaining the same visual time
+    if (newIsAm && hours >= 12) {
+      hours -= 12;
+    } else if (!newIsAm && hours < 12) {
+      hours += 12;
+    }
+    
+    // Update formData with new AM/PM
+    setFormData(prev => ({
       ...prev,
-      [name]: value,
+      time: `${hours}:${minutes} ${newIsAm ? 'AM' : 'PM'}`
     }));
   };
 
-  // Handle ticket type price changes
-  // const handleTicketPriceChange = (type, value) => {
-  //   setFormData((prev) => ({
-  //     ...prev,
-  //     ticketTypes: {
-  //       ...prev.ticketTypes,
-  //       [type]: Number(value),
-  //     },
-  //   }));
-  // };
-
-  const handleTicketChange = (field, type, value) => {
-    // Handle empty string or NaN values by defaulting to 0
-    const numericValue = value === '' ? 0 : Number(value);
-
-    setFormData((prev) => ({
-      ...prev,
-      [field]: {
-        ...prev[field],
-        [type]: Number(value), // Ensure numeric value
-      },
-    }));
-  };
-
-  // Handle form submission
+  // Form submission
   const handleSubmit = async (e) => {
     e.preventDefault();
 
     if (!isAuthenticated) {
-      toast.error('You must be logged in to create an event');
-      navigate('/');
+      toast.error('You must be logged in to update an event');
+      return navigate('/login');
+    }
+
+    // Validate at least one image exists
+    if (previewUrls.length === 0) {
+      toast.error('Please keep at least one image');
       return;
     }
 
-    if (!images || images.length === 0) {
-      toast.error('Please upload at least one event image');
+    // Validate at least one ticket price is set
+    const hasValidTickets = Object.values(formData.ticketTypes).some(
+      (price) => price > 0
+    );
+    if (!hasValidTickets) {
+      toast.error('Please set at least one ticket price');
       return;
     }
 
-    const processedData = {
-      ...formData,
-      ticketTypes: {
-        general:
-          formData.ticketTypes.general === ''
-            ? 0
-            : Number(formData.ticketTypes.general),
-        vip:
-          formData.ticketTypes.vip === ''
-            ? 0
-            : Number(formData.ticketTypes.vip),
-        premium:
-          formData.ticketTypes.premium === ''
-            ? 0
-            : Number(formData.ticketTypes.premium),
-      },
-      ticketsAvailable: {
-        general:
-          formData.ticketsAvailable.general === ''
-            ? 0
-            : Number(formData.ticketsAvailable.general),
-        vip:
-          formData.ticketsAvailable.vip === ''
-            ? 0
-            : Number(formData.ticketsAvailable.vip),
-        premium:
-          formData.ticketsAvailable.premium === ''
-            ? 0
-            : Number(formData.ticketsAvailable.premium),
-      },
-    };
-
-    if (!user?._id) {
-      throw new Error('User not authenticated');
+    if (!time) {
+      toast.error('Please set a valid time');
+      return;
     }
+  
+
     try {
-      // Prepare data with proper structure
       const eventData = {
         ...formData,
-        organizerId: user._id,
-        ...processedData,
+        time: time ? `${time} ${isAm ? 'AM' : 'PM'}` : currentEvent.time,
         images,
+        deletedImages,
+        existingImages: previewUrls
+        .filter(url => !url.startsWith('blob:')) // Only keep non-blob URLs
+        .filter(url => !deletedImages.includes(url)), // Exclude deleted images
+    };
 
-        // Ensure ticket data is properly structured
-        // ticketPrices: formData.ticketTypes, // Or keep as ticketPrices if that's your model
-        // ticketsAvailable: formData.ticketsAvailable
-      };
+    
 
-      const response = await createEvent(eventData);
+      const response = await updateEvent(id, eventData);
 
-      if (response && response.event) {
-        toast.success('Event created successfully!');
+      if (response?.event) {
+        toast.success('Event updated successfully!');
+        window.scrollTo(0, 0);
         navigate(`/events/${response.event.id}`);
       }
     } catch (error) {
-      console.error('Creation error:', error);
-      toast.error(error.response?.data?.message || 'Failed to create event');
+      toast.error(error.response?.data?.message || 'Failed to update event');
     }
   };
 
@@ -193,6 +257,21 @@ const CreateEvent = () => {
     'Exhibitions',
   ];
 
+  // Loading state
+  if (isInitializing || isLoading) {
+    return (
+      <div className="min-h-screen">
+        <Navbar />
+        <div className="flex justify-center items-center h-screen">
+          <Loader className="h-12 w-12 animate-spin text-primary" />
+        </div>
+      </div>
+    );
+  }
+
+  console.log('Input time:', time);
+console.log('Form time:', formData.time);
+
   return (
     <div className="min-h-screen">
       <Navbar />
@@ -201,10 +280,9 @@ const CreateEvent = () => {
         {/* Hero Section */}
         <div className="hero-gradient text-white py-16">
           <div className="container mx-auto px-4">
-            <h1 className="heading-lg mb-4">Create New Event</h1>
+            <h1 className="heading-lg mb-4">Update Event</h1>
             <p className="text-lg text-white/80 max-w-2xl">
-              Share your event with the world and start selling tickets on our
-              platform.
+              Update your event details and ticket information.
             </p>
           </div>
         </div>
@@ -347,7 +425,7 @@ const CreateEvent = () => {
                           <input
                             type="time"
                             value={time}
-                            onChange={handleTimeChange}
+                            onChange={handleTimeChange} 
                             className="flex-1 p-2.5 border-0 focus:outline-none focus:ring-0  hide-ampm"
                             required
                           />
@@ -405,7 +483,7 @@ const CreateEvent = () => {
                       </div>
                     </div>
 
-                  <div>
+                    <div>
                       <label
                         htmlFor="organizer"
                         className="block font-medium mb-1 required"
@@ -599,10 +677,11 @@ const CreateEvent = () => {
                   <h2 className="heading-md mb-6">Event Image</h2>
 
                   <div className="space-y-4">
-                    {/* Image Upload */}
                     <div
                       className={`border-2 border-dashed rounded-lg p-6 text-center cursor-pointer hover:bg-muted/50 transition-colors ${
-                        previewUrls ? 'border-primary/50' : 'border-muted'
+                        previewUrls.length
+                          ? 'border-primary/50'
+                          : 'border-muted'
                       }`}
                       onClick={() =>
                         document.getElementById('event-image').click()
@@ -610,30 +689,37 @@ const CreateEvent = () => {
                     >
                       {previewUrls.length > 0 ? (
                         <div className="grid grid-cols-2 gap-4">
-                          {previewUrls.map((url, idx) => (
-                            <div key={idx} className="relative">
-                              <img
-                                src={url}
-                                alt={`Preview ${idx}`}
-                                className="rounded-lg max-h-48 object-cover w-full"
-                              />
-                              <button
-                                type="button"
-                                onClick={(e) => {
-                                  e.stopPropagation(); // Prevent triggering the file input
-                                  const newUrls = [...previewUrls];
-                                  newUrls.splice(idx, 1);
-                                  setPreviewUrls(newUrls);
-                                }}
-                                className="absolute top-2 right-2 bg-red-500 text-white rounded-full w-6 h-6 flex items-center justify-center hover:bg-red-600 transition-colors"
-                              >
-                                ×
-                              </button>
-                            </div>
-                          ))}
+                         {previewUrls.map((url, idx) => (
+  <div key={idx} className="relative">
+    <img
+      src={url}
+      alt={`Preview ${idx}`}
+      className={`rounded-lg max-h-48 object-cover w-full ${
+        deletedImages.includes(url) ? 'opacity-50' : ''
+      }`}
+    />
+    <button
+      type="button"
+      onClick={(e) => {
+        e.stopPropagation();
+        removeImage(idx);
+      }}
+      className="absolute top-2 right-2 bg-red-500 text-white rounded-full w-6 h-6 flex items-center justify-center hover:bg-red-600 transition-colors"
+    >
+      ×
+    </button>
+    {url.startsWith('blob:') && (
+      <span className="absolute bottom-2 left-2 bg-blue-500 text-white text-xs px-2 py-1 rounded">
+        New
+      </span>
+    )}
+  </div>
+))}
                           <div className="col-span-2 flex justify-between items-center">
                             <p className="text-sm text-muted-foreground">
-                              Click to add more images
+                              {previewUrls.length >= 4
+                                ? 'Maximum 4 images'
+                                : 'Click to add more images'}
                             </p>
                           </div>
                         </div>
@@ -648,7 +734,6 @@ const CreateEvent = () => {
                           </div>
                         </div>
                       )}
-
                       <input
                         type="file"
                         id="event-image"
@@ -656,10 +741,8 @@ const CreateEvent = () => {
                         multiple
                         className="hidden"
                         onChange={handleImageChange}
-                        required={previewUrls.length === 0}
                       />
                     </div>
-
                     <p className="text-xs text-muted-foreground">
                       Recommended size: 1200 x 800 pixels. Max file size: 5MB.
                       JPG, PNG or WEBP format.
@@ -676,14 +759,14 @@ const CreateEvent = () => {
                       {isLoading ? (
                         <>
                           <Loader className="h-5 w-5 animate-spin mr-2" />
-                          Creating Event...
+                          Updating Event...
                         </>
                       ) : (
-                        'Create Event'
+                        'Update Event'
                       )}
                     </button>
                     <p className="text-center text-xs text-muted-foreground mt-4">
-                      By creating this event, you agree to our Terms of Service
+                      By updating this event, you agree to our Terms of Service
                       and Event Policies.
                     </p>
                   </div>
@@ -699,4 +782,4 @@ const CreateEvent = () => {
   );
 };
 
-export default CreateEvent;
+export default UpdateEvent;

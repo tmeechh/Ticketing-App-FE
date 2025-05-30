@@ -1,41 +1,38 @@
-
 import axios from 'axios';
+import useAuthStore from '@/store/authStore'; // adjust the path if needed
 
-// Create an axios instance with base URL and default configs
 const axiosInstance = axios.create({
-  baseURL: 'http://localhost:8080/api/v1',
+  baseURL: import.meta.env.VITE_API_BASE_URL,
   headers: {
     'Content-Type': 'application/json',
   },
+  withCredentials: true, // Optional: use if your backend sets cookies
 });
 
-// Add a request interceptor to include auth token when available
+// Attach token on each request using Zustand's token
 axiosInstance.interceptors.request.use(
   (config) => {
-    const token = localStorage.getItem('token');
+    const token = useAuthStore.getState().token || localStorage.getItem('token');
     if (token) {
       config.headers.Authorization = `Bearer ${token}`;
     }
     return config;
   },
-  (error) => {
-    return Promise.reject(error);
-  }
+  (error) => Promise.reject(error)
 );
 
-// Add a response interceptor to handle common error scenarios
+// Handle 401 responses globally
 axiosInstance.interceptors.response.use(
   (response) => response,
   (error) => {
     const { response } = error;
-    
-    // Handle token expiration
-    if (response && response.status === 401) {
-      localStorage.removeItem('token');
-      localStorage.removeItem('user');
-      window.location.href = '/';
+
+    if (response?.status === 401) {
+      const logout = useAuthStore.getState().logout;
+      logout(); // Call Zustand logout to clean state
+      console.warn('Unauthorized – token removed and user logged out.');
     }
-    
+
     return Promise.reject(error);
   }
 );

@@ -1,10 +1,10 @@
 
 import React, { useState } from 'react';
-import { Input } from "../ui/input";
-import { Label } from "../ui/label";
-import { Button } from "../ui/button";
+import { Input } from "@/components/ui/input";
+import { Label } from "@/components/ui/label";
+import { Button } from "@/components/ui/button";
 import { Eye, EyeOff, Loader } from 'lucide-react';
-import useAuthStore from '../../store/authStore';
+import useAuthStore from '@/store/authStore';
 
 const LoginForm = ({ onSuccess, onRegisterClick }) => {
   const [email, setEmail] = useState('');
@@ -69,7 +69,7 @@ const LoginForm = ({ onSuccess, onRegisterClick }) => {
       
       <Button 
         type="submit" 
-        className="w-full bg-[hsl(266,35%,23%)] hover:bg-primary/90 text-white font-semibold rounded-md h-11" 
+        className="w-full bg-[hsl(266,35%,23%)]  cursor-pointer  hover:bg-primary/90 text-white font-semibold rounded-md h-11" 
         disabled={isLoading}
       >
         {isLoading ? (

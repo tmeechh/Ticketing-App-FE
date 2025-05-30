@@ -1,6 +1,6 @@
 
 import { create } from 'zustand';
-import axios from '../lib/axiosConfig';
+import axios from '@/lib/axiosConfig';
 import { toast } from 'sonner';
 
 const useTicketStore = create((set, get) => ({

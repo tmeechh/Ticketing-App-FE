@@ -1,6 +1,6 @@
 
 import { create } from 'zustand';
-import axios from '../lib/axiosConfig';
+import axios from '@/lib/axiosConfig';
 import { toast } from 'sonner';
 
 const useEventStore = create((set, get) => ({
@@ -16,10 +16,12 @@ const useEventStore = create((set, get) => ({
     set({ isLoading: true });
     try {
       const response = await axios.get('/events');
-      const events = response.data;
+      const events = response.data.events;
       
       // Extract featured and upcoming events
-      const featured = events.filter(event => event.featured);
+      const featured = events.slice(0, 4);
+
+      // const featured = events.filter(event => event.featured === true);
       
       set({ 
         events, 
@@ -45,8 +47,11 @@ const useEventStore = create((set, get) => ({
     set({ isLoading: true, currentEvent: null });
     try {
       const response = await axios.get(`/events/${id}`);
-      set({ currentEvent: response.data, isLoading: false });
-      return response.data;
+
+
+      set({ currentEvent: response.data.event, isLoading: false });
+      return response.data.event;
+      
     } catch (error) {
       set({ 
         isLoading: false, 
@@ -56,102 +61,95 @@ const useEventStore = create((set, get) => ({
       toast.error('Failed to load event details. Please try again later.');
       return null;
     }
+    
   },
   
   // Create new event
   createEvent: async (eventData) => {
     set({ isLoading: true });
     try {
-      // Create FormData for image upload
       const formData = new FormData();
-      
-      // Add all event properties to FormData
-      Object.keys(eventData).forEach(key => {
-        if (key === 'image') {
-          formData.append('image', eventData.image);
-        } else if (key === 'ticketTypes') {
-          // Handle ticketTypes object
-          formData.append('ticketTypes', JSON.stringify(eventData.ticketTypes));
+  
+      // Append all regular fields
+      Object.entries(eventData).forEach(([key, value]) => {
+        if (key === 'images') {
+          // Handle images separately
+          eventData.images.forEach(img => formData.append('images', img));
+        } else if (key === 'ticketTypes' || key === 'ticketsAvailable') {
+          // Stringify ticket data
+          formData.append(key, JSON.stringify(value));
         } else {
-          formData.append(key, eventData[key]);
+          formData.append(key, value);
         }
       });
-      
-      const response = await axios.post('/events', formData, {
-        headers: {
-          'Content-Type': 'multipart/form-data'
-        }
+  
+      const response = await axios.post("/events", formData, {
+        headers: { "Content-Type": "multipart/form-data" },
       });
-      
-      // Update events list
+  
+      // Update state
       const { events } = get();
-      set({ 
-        events: [response.data, ...events],
-        isLoading: false 
-      });
-      
-      toast.success('Event created successfully!');
+      set({ events: [response.data.event, ...events], isLoading: false });
+      toast.success("Event created successfully!");
+      console.log('Event data being sent:', eventData);
       return response.data;
-    } catch (error) {
-      set({ 
-        isLoading: false, 
-        error: error.response?.data?.message || 'Failed to create event' 
-      });
       
-      toast.error(error.response?.data?.message || 'Failed to create event');
+    } catch (error) {
+      set({
+        isLoading: false,
+        error: error.response?.data?.message || "Failed to create event",
+      });
+      toast.error(error.response?.data?.message || "Failed to create event");
       return null;
     }
   },
   
+ 
   // Update event
   updateEvent: async (id, eventData) => {
     set({ isLoading: true });
     try {
-      // Create FormData for image upload
       const formData = new FormData();
-      
-      // Add all event properties to FormData
-      Object.keys(eventData).forEach(key => {
-        if (key === 'image' && eventData.image instanceof File) {
-          formData.append('image', eventData.image);
-        } else if (key === 'ticketTypes') {
-          // Handle ticketTypes object
-          formData.append('ticketTypes', JSON.stringify(eventData.ticketTypes));
+  
+      // Mirror createEvent's data handling
+      Object.entries(eventData).forEach(([key, value]) => {
+        if (key === 'images') {
+          eventData.images.forEach(img => formData.append('images', img));
+        } else if (key === 'ticketTypes' || key === 'ticketsAvailable') {
+          formData.append(key, JSON.stringify(value)); // Add ticketsAvailable
         } else {
-          formData.append(key, eventData[key]);
+          formData.append(key, value);
         }
       });
-      
+  
       const response = await axios.patch(`/events/${id}`, formData, {
-        headers: {
-          'Content-Type': 'multipart/form-data'
-        }
+        headers: { "Content-Type": "multipart/form-data" },
       });
-      
-      // Update events list
+  
       const { events } = get();
-      const updatedEvents = events.map(event => 
+      const updatedEvents = events.map((event) =>
         event.id === id ? response.data : event
       );
-      
-      set({ 
+  
+      set({
         events: updatedEvents,
         currentEvent: response.data,
-        isLoading: false 
+        isLoading: false,
       });
-      
-      toast.success('Event updated successfully!');
+  
+      toast.success("Event updated successfully!");
       return response.data;
     } catch (error) {
-      set({ 
-        isLoading: false, 
-        error: error.response?.data?.message || 'Failed to update event' 
+      set({
+        isLoading: false,
+        error: error.response?.data?.message || "Failed to update event",
       });
-      
-      toast.error(error.response?.data?.message || 'Failed to update event');
+  
+      toast.error(error.response?.data?.message || "Failed to update event");
       return null;
     }
   },
+  
   
   // Delete event
   deleteEvent: async (id) => {
@@ -178,6 +176,12 @@ const useEventStore = create((set, get) => ({
       return false;
     }
   },
+
+fetchOrganizerEvents: async (organizerId) => {
+  const response = await axios.get(`/events/organizer/${organizerId}`);
+  console.log("Full API Response:", response.data); // Debug log
+  return response.data.data || []; // Access the 'data' property
+},
 
   getCategoryCounts: () => {
     const events = get().events;

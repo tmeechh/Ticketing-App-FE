@@ -1,11 +1,11 @@
 
 import React, { useEffect } from 'react';
 import { Link, useNavigate } from 'react-router-dom';
-import Navbar from '../components/Navbar';
-import Footer from '../components/Footer';
+import Navbar from '@/components/Navbar';
+import Footer from '@/components/Footer';
 import { User, Ticket, Calendar, Clock, LogOut, Settings } from 'lucide-react';
-import useAuthStore from '../store/authStore';
-import useTicketStore from '../store/useTicketStore';
+import useAuthStore from '@/store/authStore';
+import useTicketStore from '@/store/useTicketStore';
 
 const Profile = () => {
   const navigate = useNavigate();
@@ -26,9 +26,9 @@ const Profile = () => {
     navigate('/');
   };
   
-  if (!isAuthenticated || !user) {
-    return null; // Will redirect in useEffect
-  }
+  // if (!isAuthenticated || !user) {
+  //   return null; // Will redirect in useEffect
+  // }
   
   return (
     <div className="min-h-screen">
@@ -61,10 +61,18 @@ const Profile = () => {
               <div className="premium-card h-full">
                 <div className="flex flex-col items-center text-center mb-8">
                   <div className="w-24 h-24 bg-primary/20 rounded-full flex items-center justify-center mb-4">
-                    <User className="w-12 h-12 text-primary" />
+                  {user?.image ? (
+    <img 
+      src={user.image} 
+      alt="User profile" 
+      className="w-full h-full rounded-full object-cover"
+    />
+  ) : (
+    <User className="w-12 h-12 text-primary" />
+  )}
                   </div>
-                  <h2 className="text-2xl font-bold">{user.name}</h2>
-                  <p className="text-muted-foreground">{user.email}</p>
+                  <h2 className="text-2xl font-bold">{user?.fullName}</h2>
+                  <p className="text-muted-foreground">{user?.email}</p>
                 </div>
                 
                 <div className="space-y-4">
@@ -75,7 +83,16 @@ const Profile = () => {
                       <p className="text-sm text-muted-foreground">View and manage your event tickets</p>
                     </div>
                   </Link>
-                  {user?.role === 'organizer' && (
+                  {(user?.roles === 'organizer' || user?.roles?.includes?.('organizer')) && (
+                  <Link to="/my-events" className="flex items-center space-x-3 p-3 hover:bg-muted rounded-lg transition-colors">
+                    <Calendar className="w-5 h-5 text-primary" />
+                    <div>
+                      <h3 className="font-medium">My Event</h3>
+                      <p className="text-sm text-muted-foreground">Manage your own event on our platform</p>
+                    </div>
+                  </Link>
+                   )}
+                  {(user?.roles === 'organizer' || user?.roles?.includes?.('organizer')) && (
                   <Link to="/create-event" className="flex items-center space-x-3 p-3 hover:bg-muted rounded-lg transition-colors">
                     <Calendar className="w-5 h-5 text-primary" />
                     <div>
@@ -84,13 +101,13 @@ const Profile = () => {
                     </div>
                   </Link>
                    )}
-                  <div className="flex items-center space-x-3 p-3 hover:bg-muted rounded-lg transition-colors cursor-pointer">
+                  <Link to="/account-settings" className="flex items-center space-x-3 p-3 hover:bg-muted rounded-lg transition-colors cursor-pointer">
                     <Settings className="w-5 h-5 text-primary" />
                     <div>
                       <h3 className="font-medium">Account Settings</h3>
                       <p className="text-sm text-muted-foreground">Update your profile and preferences</p>
                     </div>
-                  </div>
+                  </Link>
                 </div>
               </div>
             </div>
@@ -110,12 +127,12 @@ const Profile = () => {
                 ) : upcomingTickets.length > 0 ? (
                   <div className="space-y-4">
                     {upcomingTickets.slice(0, 3).map(ticket => (
-                      <div key={ticket.id} className="flex border border-muted rounded-lg overflow-hidden">
+                      <div key={ticket?.id} className="flex border border-muted rounded-lg overflow-hidden">
                         {/* Event Image */}
                         <div className="hidden sm:block w-24 h-24">
                           <img 
                             src={ticket.event?.image || "https://placehold.co/600x400?text=Event"} 
-                            alt={ticket.eventName} 
+                            alt={ticket?.eventName} 
                             className="w-full h-full object-cover"
                           />
                         </div>
@@ -123,20 +140,20 @@ const Profile = () => {
                         {/* Event Details */}
                         <div className="flex-1 p-4 flex flex-col justify-between">
                           <div>
-                            <h3 className="font-medium">{ticket.eventName}</h3>
+                            <h3 className="font-medium">{ticket?.eventName}</h3>
                             <div className="flex items-center text-sm text-muted-foreground mt-1">
                               <Calendar className="h-3.5 w-3.5 mr-1" />
-                              <span>{ticket.eventDate}</span>
+                              <span>{ticket?.eventDate}</span>
                               <span className="mx-2">•</span>
                               <Clock className="h-3.5 w-3.5 mr-1" />
-                              <span>{ticket.eventTime}</span>
+                              <span>{ticket?.eventTime}</span>
                             </div>
                           </div>
                           <div className="flex justify-between items-center mt-2">
                             <span className="text-xs bg-primary/10 text-primary px-2 py-1 rounded-full">
-                              {ticket.ticketType}
+                              {ticket?.ticketType}
                             </span>
-                            <Link to={`/events/${ticket.eventId}`} className="text-sm text-primary hover:underline">
+                            <Link to={`/events/${ticket?.eventId}`} className="text-sm text-primary hover:underline">
                               View Event
                             </Link>
                           </div>
@@ -160,16 +177,16 @@ const Profile = () => {
                 <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
                   <div>
                     <h3 className="text-sm text-muted-foreground mb-1">Full Name</h3>
-                    <p className="font-medium">{user.name}</p>
+                    <p className="font-medium">{user?.fullName}</p>
                   </div>
                   <div>
                     <h3 className="text-sm text-muted-foreground mb-1">Email Address</h3>
-                    <p className="font-medium">{user.email}</p>
+                    <p className="font-medium">{user?.email}</p>
                   </div>
                   <div>
                     <h3 className="text-sm text-muted-foreground mb-1">Account Created</h3>
                     <p className="font-medium">
-                      {new Date(user.createdAt || Date.now()).toLocaleDateString('en-US', {
+                      {new Date(user?.createdAt || Date.now()).toLocaleDateString('en-US', {
                         year: 'numeric',
                         month: 'long',
                         day: 'numeric'

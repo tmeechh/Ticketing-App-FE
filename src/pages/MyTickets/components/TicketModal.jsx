@@ -2,7 +2,7 @@
 import React from 'react';
 import { Link } from 'react-router-dom';
 import { Calendar, Clock, MapPin, QrCode, ArrowRight, Download } from 'lucide-react';
-import useTicketStore from '../../../store/useTicketStore';
+import useTicketStore from '@/store/useTicketStore';
 import { toast } from 'sonner';
 
 const TicketModal = ({ ticket, onClose, activeTab }) => {

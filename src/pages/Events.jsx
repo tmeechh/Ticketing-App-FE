@@ -1,10 +1,10 @@
 
 import React, { useState, useEffect } from 'react';
-import Navbar from '../components/Navbar';
-import Footer from '../components/Footer';
-import EventCard from '../components/EventCard';
+import Navbar from '@/components/Navbar';
+import Footer from '@/components/Footer';
+import EventCard from '@/components/EventCard';
 import { Search, Calendar, MapPin, Loader } from 'lucide-react';
-import useEventStore from '../store/useEventStore';
+import useEventStore from '@/store/useEventStore';
 
 const EventsPage = () => {
   const { events, fetchEvents, isLoading } = useEventStore();

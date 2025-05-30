@@ -30,7 +30,7 @@ const Testimonials = () => {
   return (
     <section className="section-container">
       <div className="text-center max-w-2xl mx-auto mb-12">
-        <h5 className="text-accent font-bold tracking-wider uppercase mb-2">Testimonials</h5>
+        <h5 className="text-accent font-bold text-amber-500 tracking-wider uppercase mb-2">Testimonials</h5>
         <h2 className="heading-lg mb-4">What Our Customers Say</h2>
         <p className="text-muted-foreground">
           Join thousands of satisfied customers who have found their perfect events through EventHorizon.
@@ -44,7 +44,7 @@ const Testimonials = () => {
             className="premium-card flex flex-col hover-lift"
           >
             <div className="mb-4">
-              <Quote className="h-6 w-6 text-accent" />
+              <Quote className="h-6 w-6 text-amber-500 text-accent" />
             </div>
             
             <p className="text-lg mb-6 flex-1">{testimonial.quote}</p>

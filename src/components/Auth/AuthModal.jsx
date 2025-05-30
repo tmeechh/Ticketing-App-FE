@@ -3,11 +3,14 @@ import React, { useState, useEffect } from 'react';
 import { Dialog, DialogContent, DialogHeader, DialogTitle } from "../ui/dialog";
 import LoginForm from './LoginForm';
 import SignupForm from './SignupForm';
+import OtpVerificationForm from './otpVerificationForm';
 import { X } from 'lucide-react';
 import { toast } from 'sonner';
 
 const AuthModal = ({ isOpen, onOpenChange, defaultView = 'login' }) => {
   const [view, setView] = useState(defaultView);
+
+  const [signupEmail, setSignupEmail] = useState(null);
   
   // Reset view when modal opens with a specific defaultView
   useEffect(() => {
@@ -21,9 +24,16 @@ const AuthModal = ({ isOpen, onOpenChange, defaultView = 'login' }) => {
     toast.success('Successfully logged in!');
   };
 
-  const handleSignupSuccess = () => {
+  const handleSignupSuccess = (email) => {
+    // onOpenChange(false);
+    // toast.success('Account created successfully!');
+    setSignupEmail(email);       // Store the email for OTP
+    setView('otp'); 
+  };
+
+  const handleOtpSuccess = () => {
     onOpenChange(false);
-    toast.success('Account created successfully!');
+    toast.success('Email verified successfully!Log in to continue');
   };
 
   return (
@@ -31,7 +41,12 @@ const AuthModal = ({ isOpen, onOpenChange, defaultView = 'login' }) => {
       <DialogContent className="sm:max-w-md bg-white rounded-lg border-0 shadow-xl">
         <DialogHeader className="px-6 pt-6 pb-4 border-b border-gray-100">
           <DialogTitle className="text-center text-2xl  font-playfair font-bold text-primary">
-            {view === 'login' ? 'Welcome Back' : 'Create Account'}
+            {/* {view === 'login' ? 'Welcome Back' : 'Create Account'} */}
+            {view === 'login'
+              ? 'Welcome Back'
+              : view === 'signup'
+              ? 'Create Account'
+              : 'Verify Email'}
           </DialogTitle>
           <button
             onClick={() => onOpenChange(false)}
@@ -42,7 +57,7 @@ const AuthModal = ({ isOpen, onOpenChange, defaultView = 'login' }) => {
           </button>
         </DialogHeader>
         
-        <div className="p-6">
+        {/* <div className="p-6">
           {view === 'login' ? (
             <LoginForm 
               onSuccess={handleLoginSuccess} 
@@ -52,6 +67,26 @@ const AuthModal = ({ isOpen, onOpenChange, defaultView = 'login' }) => {
             <SignupForm 
               onSuccess={handleSignupSuccess} 
               onLoginClick={() => setView('login')} 
+            />
+          )}
+        </div> */}
+        <div className="p-6">
+          {view === 'login' && (
+            <LoginForm 
+              onSuccess={handleLoginSuccess} 
+              onRegisterClick={() => setView('signup')} 
+            />
+          )}
+          {view === 'signup' && (
+            <SignupForm 
+              onSuccess={(email) => handleSignupSuccess(email)} 
+              onLoginClick={() => setView('login')} 
+            />
+          )}
+          {view === 'otp' && signupEmail && (
+            <OtpVerificationForm 
+              email={signupEmail} 
+              onVerified={handleOtpSuccess} 
             />
           )}
         </div>

@@ -8,19 +8,26 @@ const EventCard = ({ event }) => {
   const { 
     id, 
     title, 
-    image, 
+    images, 
     date, 
     location, 
-    ticketTypes,
+    ticketPrices,
     featured = false 
   } = event;
 
   // Calculate lowest ticket price
   const getLowestPrice = () => {
-    if (!ticketTypes) return "N/A";
+    if (!ticketPrices) return "N/A";
     
-    const prices = Object.values(ticketTypes);
-    return Math.min(...prices);
+    // Handle both Map objects and plain objects
+    if (ticketPrices instanceof Map) {
+      const prices = Array.from(ticketPrices.values());
+      return Math.min(...prices);
+    } else {
+      // For plain objects, get the values directly
+      const prices = Object.values(ticketPrices);
+      return prices.length > 0 ? Math.min(...prices) : "N/A";
+    }
   };
   
   // Format date to show how far it is from now (e.g., "in 3 days")
@@ -36,7 +43,7 @@ const EventCard = ({ event }) => {
     <div className={`premium-card group h-full flex flex-col ${featured ? 'border-accent/30 shadow-lg' : ''}`}>
       <div className="relative overflow-hidden rounded-xl">
         <img 
-          src={image} 
+          src={images[0]} 
           alt={title} 
           className="w-full h-52 object-cover group-hover:scale-105 transition-transform duration-500"
         />
@@ -69,11 +76,13 @@ const EventCard = ({ event }) => {
         <div className="mt-auto pt-4 border-t border-muted flex justify-between items-center">
           <div>
             <span className="block text-sm text-muted-foreground">Starting from</span>
-            <span className="font-bold text-lg">${getLowestPrice()}</span>
+            <span className="font-bold text-lg">
+              {typeof getLowestPrice() === 'number' ? `$${getLowestPrice().toFixed(2)}` : getLowestPrice()}
+            </span>
           </div>
           <Link 
             to={`/events/${id}`} 
-            className="inline-flex items-center justify-center whitespace-nowrap rounded-md text-sm font-medium ring-offset-background transition-colors focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2 disabled:pointer-events-none disabled:opacity-50 bg-primary text-primary-foreground hover:bg-primary/90 h-10 px-4 py-2"
+            className="inline-flex items-center bg-[hsl(266,35%,23%)] justify-center whitespace-nowrap rounded-md text-sm font-medium ring-offset-background transition-colors focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2 disabled:pointer-events-none disabled:opacity-50  text-white hover:bg-primary/90 h-10 px-4 py-2"
           >
             Book Now
           </Link>

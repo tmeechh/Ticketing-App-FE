@@ -1,4 +1,4 @@
-import useEventStore from '../store/useEventStore'; // adjust path
+import useEventStore from '@/store/useEventStore'; // adjust path
 import React from 'react';
 import { Link } from 'react-router-dom'; // 
 
@@ -56,7 +56,7 @@ const Categories = () => {
     <section className="bg-secondary py-24">
       <div className="section-container">
         <div className="text-center max-w-2xl mx-auto mb-12">
-          <h5 className="text-accent font-medium tracking-wider uppercase mb-2">Browse Categories</h5>
+          <h5 className="text-accent font-medium text-amber-500 tracking-wider uppercase mb-2">Browse Categories</h5>
           <h2 className="heading-lg mb-4">Find Events By Category</h2>
           <p className="text-muted-foreground">
             Discover events that match your interests...

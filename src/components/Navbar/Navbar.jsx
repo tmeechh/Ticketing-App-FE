@@ -1,9 +1,9 @@
 
 import React, { useState, useEffect } from 'react';
-import { useNavigate } from 'react-router-dom';
+import { useLocation, useNavigate} from 'react-router-dom';
 import { Menu, X } from 'lucide-react';
 import AuthModal from '../Auth/AuthModal';
-import useAuthStore from '../../store/authStore';
+import useAuthStore from '@/store/authStore';
 import NavLogo from './NavLogo';
 import DesktopNav from './DesktopNav';
 import MobileNav from './MobileNav';
@@ -41,7 +41,13 @@ const Navbar = () => {
     logout();
     navigate('/');
   };
+  const { pathname } = useLocation();
+  const isHome = pathname === '/';
 
+  const logoColor = isHome && !isScrolled
+  ? 'text-[hsl(var(--white))]'
+  : 'text-[hsl(var(--primary))]';
+  
   return (
     <>
       <header 
@@ -72,9 +78,9 @@ const Navbar = () => {
             onClick={() => setIsMenuOpen(!isMenuOpen)}
           >
             {isMenuOpen ? (
-              <X className={`h-6 w-6 ${isScrolled ? 'text-[hsl(var(--foreground))]' : 'text-[hsl(var(--white))]'}`} />
+              <X className={`h-6 w-6 ${logoColor}`} />
             ) : (
-              <Menu className={`h-6 w-6 ${isScrolled ? 'text-[hsl(var(--foreground))]' : 'text-[hsl(var(--white))]'}`} />
+              <Menu className={`h-6 w-6 ${logoColor}`} />
             )}
           </button>
         </div>

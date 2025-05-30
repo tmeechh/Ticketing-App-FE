@@ -1,14 +1,14 @@
 import React, { useState } from 'react';
-import { Input } from "../ui/input";
-import { Label } from "../ui/label";
-import { Button } from "../ui/button";
+import { Input } from "@/components/ui/input";
+import { Label } from "@/components/ui/label";
+import { Button } from "@/components/ui/button";
 import { Eye, EyeOff, Loader } from 'lucide-react';
 import useAuthStore from '../../store/authStore';
 
 const SignupForm = ({ onSuccess, onLoginClick }) => {
-  const [role, setRole] = useState(null); // null → not selected yet
+  const [roles, setRole] = useState(null); // null → not selected yet
   const [formData, setFormData] = useState({
-    name: '',
+    fullName: '',
     email: '',
     password: '',
     confirmPassword: ''
@@ -30,16 +30,16 @@ const SignupForm = ({ onSuccess, onLoginClick }) => {
       return;
     }
 
-    const { name, email, password } = formData;
-    const success = await register({ name, email, password, role });
+    const { fullName, email, password } = formData;
+    const success = await register({ fullName, email, password, roles: [roles] });
 
     if (success && onSuccess) {
-      onSuccess();
+      onSuccess(email);
     }
   };
 
   // Step 1: Role selector
-  if (!role) {
+  if (!roles) {
     return (
       <div className="space-y-6 text-center">
         <h3 className="text-lg font-semibold text-gray-800">Join as</h3>
@@ -65,8 +65,8 @@ const SignupForm = ({ onSuccess, onLoginClick }) => {
   return (
     <form onSubmit={handleSubmit} className="space-y-4">
       <div className="text-sm text-gray-500 text-center mb-2">
-        Signing up as <span className="font-medium text-primary">{role === 'organizer' ? 'Organizer' : 'Ticket Buyer'}</span>
-        <button onClick={() => setRole(null)} type="button" className="ml-2 text-xs underline text-gray-400 hover:text-gray-600">
+        Signing up as <span className="font-medium text-primary">{roles === 'organizer' ? 'Organizer' : 'Ticket Buyer'}</span>
+        <button onClick={() => setRole(null)} type="button" className="ml-2 text-xs underline cursor-pointer text-gray-400 hover:text-gray-600">
           Change
         </button>
       </div>
@@ -75,11 +75,11 @@ const SignupForm = ({ onSuccess, onLoginClick }) => {
         <Label htmlFor="name">Full Name</Label>
         <Input
           id="name"
-          name="name"
+          name="fullName"
           type="text"
           placeholder="John Doe"
           required
-          value={formData.name}
+          value={formData.fullName}
           onChange={handleChange}
         />
       </div>
@@ -137,7 +137,7 @@ const SignupForm = ({ onSuccess, onLoginClick }) => {
 
       <Button
         type="submit"
-        className="w-full bg-[hsl(266,35%,23%)] hover:bg-primary/90 text-white font-semibold rounded-md h-11 mt-2"
+        className="w-full bg-[hsl(266,35%,23%)] hover:bg-primary/90 cursor-pointer text-white font-semibold rounded-md h-11 mt-2"
         disabled={isLoading}
       >
         {isLoading ? (

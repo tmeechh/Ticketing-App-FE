@@ -19,8 +19,8 @@ const Hero = () => {
         <div className="absolute inset-0 bg-black/60"></div>
       </div>
       
-      <div className="container mx-auto px-4 relative z-10 py-24 md:py-0">
-        <div className="grid md:grid-cols-2 gap-8 items-center">
+      <div className=" mx-2 px-4 relative z-10 py-24 md:py-0">
+        <div className="grid md:grid-cols-2 gap-8 lg:gap-20 items-center">
           <div className="space-y-8">
             <div className="space-y-4">
               <h5 className="text-accent font-medium tracking-wider uppercase animate-fade-in">Premium Event Ticketing</h5>
@@ -72,11 +72,11 @@ const Hero = () => {
                 <div className="p-6">
                   <div className="flex justify-between items-end">
                     <div>
-                      <p className="text-accent font-medium">Women's Champions League Final</p>
+                      <p className="text-accent text-amber-500 font-medium">Women's Champions League Final</p>
                       <h3 className="text-2xl font-bold text-white">Arsenal vs Barcelona</h3>
                       <p className="text-white/80">May 24 • Estádio José Alvalade, Lisbon</p>
                     </div>
-                    <Link to="/events/womens-champions-final" className="btn-accent">Book Now</Link>
+                    <Link to="/events/women's-champions-final" className="btn-accent">Book Now</Link>
                   </div>
                 </div>
               </div>

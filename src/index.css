@@ -1,8 +1,4 @@
-@import "tailwindcss";
-
-
-
-
+@import 'tailwindcss';
 
 @font-face {
   font-family: 'Work Sans';
@@ -10,7 +6,6 @@
   font-weight: normal;
   font-style: normal;
 }
-
 
 @layer base {
   :root {
@@ -55,11 +50,14 @@
   body {
     background-color: hsl(var(--background));
     color: hsl(var(--foreground));
-    font-family: 'Work Sans','Montserrat', sans-serif;
+    font-family: 'Work Sans', 'Montserrat', sans-serif;
     font-feature-settings: 'rlig' 1, 'calt' 1;
   }
 
-  h1, h2, h3, h4 {
+  h1,
+  h2,
+  h3,
+  h4 {
     font-family: 'Playfair Display', serif;
   }
 }
@@ -355,4 +353,10 @@
   backdrop-filter: blur(12px);
   background-color: hsla(var(--white) / 0.1);
   border: 1px solid hsla(var(--white) / 0.2);
+}
+
+
+/* Hide AM/PM in the native time picker */
+.hide-ampm::-webkit-datetime-edit-ampm-field {
+  display: none;
 }

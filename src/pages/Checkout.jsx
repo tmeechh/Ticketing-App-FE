@@ -1,8 +1,8 @@
 
 import React, { useState } from 'react';
 import { useNavigate } from 'react-router-dom';
-import Navbar from '../components/Navbar';
-import Footer from '../components/Footer';
+import Navbar from '@/components/Navbar';
+import Footer from '@/components/Footer';
 import { Ticket, CreditCard, Calendar, MapPin, Clock, Info, CheckCircle } from 'lucide-react';
 
 // Mock data - would be replaced with actual data from cart/context
