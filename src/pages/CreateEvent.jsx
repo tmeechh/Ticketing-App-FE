@@ -41,11 +41,23 @@ const CreateEvent = () => {
   const [isAm, setIsAm] = useState(true);
 
   const handleTimeChange = (e) => {
-    setTime(e.target.value);
+     const newTime = e.target.value;
+  setTime(newTime);
+  // Update formData with the formatted time
+  setFormData(prev => ({
+    ...prev,
+    time: `${newTime} ${isAm ? 'AM' : 'PM'}`
+  }));
   };
 
   const handleAmPmChange = () => {
-    setIsAm(!isAm);
+    const newIsAm = !isAm;
+  setIsAm(newIsAm);
+  // Update formData with the formatted time whenever AM/PM changes
+  setFormData(prev => ({
+    ...prev,
+    time: `${time} ${newIsAm ? 'AM' : 'PM'}`
+  }));
   };
 
   // Format for backend (combines time + AM/PM)
@@ -341,9 +353,9 @@ const CreateEvent = () => {
                           Event Time
                         </label>
                         <div className="flex items-center border border-input rounded-md overflow-hidden">
-                          <span className="px-3 py-2.5 bg-muted/50">
+                          {/* <span className="px-3 py-2.5 bg-muted/50">
                             <Clock className="h-5 w-5 text-muted-foreground" />
-                          </span>
+                          </span> */}
                           <input
                             type="time"
                             value={time}
@@ -405,7 +417,7 @@ const CreateEvent = () => {
                       </div>
                     </div>
 
-                  <div>
+                    <div>
                       <label
                         htmlFor="organizer"
                         className="block font-medium mb-1 required"

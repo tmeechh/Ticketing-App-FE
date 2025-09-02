@@ -1,6 +1,6 @@
 import React, { useEffect, useState } from 'react';
 import { Link } from 'react-router-dom';
-import { Calendar, Edit, Trash2 } from 'lucide-react';
+import { Calendar, Edit, Trash2 , Loader } from 'lucide-react';
 import useEventStore from '@/store/useEventStore';
 import useAuthStore from '@/store/authStore';
 import Navbar from '@/components/Navbar';
@@ -11,6 +11,8 @@ const OrganizerEvents = () => {
   const { fetchOrganizerEvents, deleteEvent } = useEventStore();
   const [events, setEvents] = useState([]);
   const [loading, setLoading] = useState(true);
+  const [showDeleteModal, setShowDeleteModal] = useState(false);
+  const [eventToDelete, setEventToDelete] = useState(null);
 
   useEffect(() => {
     const loadEvents = async () => {
@@ -23,14 +25,28 @@ const OrganizerEvents = () => {
     loadEvents();
   }, [user?._id, fetchOrganizerEvents]);
 
-  const handleDelete = async (eventId) => {
-    if (window.confirm('Are you sure you want to delete this event?')) {
-      await deleteEvent(eventId);
-      setEvents(events.filter(event => event._id !== eventId));
+  const handleDeleteClick = (eventId) => {
+    setEventToDelete(eventId);
+    setShowDeleteModal(true);
+  };
+
+  const confirmDelete = async () => {
+    if (eventToDelete) {
+      await deleteEvent(eventToDelete);
+      setEvents(events.filter(event => event._id !== eventToDelete));
+      setShowDeleteModal(false);
+      setEventToDelete(null);
     }
   };
 
-  if (loading) return <div className="text-center py-8">Loading your events...</div>;
+  const cancelDelete = () => {
+    setShowDeleteModal(false);
+    setEventToDelete(null);
+  };
+
+  if (loading) return  <div className="flex justify-center items-center py-20">
+                    <Loader className="h-8 w-8 animate-spin text-primary" />
+                  </div>;
 
   return (
     <>
@@ -80,7 +96,7 @@ const OrganizerEvents = () => {
                       <Edit className="w-5 h-5" />
                     </Link>
                     <button
-                      onClick={() => handleDelete(event._id)}
+                      onClick={() => handleDeleteClick(event._id)}
                       className="p-2 text-red-500 hover:bg-red-500/10 rounded-full"
                     >
                       <Trash2 className="w-5 h-5" />
@@ -93,6 +109,29 @@ const OrganizerEvents = () => {
         </div>
       )}
       </div>
+
+      {showDeleteModal && (
+        <div className="fixed inset-0 bg-black/70 bg-opacity-10 flex items-center justify-center z-50">
+          <div className="bg-white  rounded-lg p-6 max-w-md w-full">
+            <h3 className="text-lg font-bold mb-4">Confirm Deletion</h3>
+            <p className="mb-6">Are you sure you want to delete this event? This action cannot be undone.</p>
+            <div className="flex justify-end space-x-4">
+              <button
+                onClick={cancelDelete}
+                className="px-4 py-2 border border-gray-300 dark:border-gray-600 rounded-md hover:bg-gray-100 dark:hover:bg-gray-700 transition"
+              >
+                Cancel
+              </button>
+              <button
+                onClick={confirmDelete}
+                className="px-4 py-2 bg-red-500 text-white rounded-md hover:bg-red-600 transition"
+              >
+                Delete
+              </button>
+            </div>
+          </div>
+        </div>
+      )}
       <Footer/>
     </>
     

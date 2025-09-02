@@ -117,34 +117,19 @@ const EventDetail = () => {
   const handleTicketPurchase = async () => {
     if (!isAuthenticated) {
       toast.error('Please log in to purchase tickets');
-      navigate('/login');
       return;
     }
-
-    if (!selectedTicketType) {
+    if (!selectedTicketType?.type) {
       toast.error('Please select a ticket type');
       return;
     }
 
     setIsPurchasing(true);
     try {
-      const result = await buyTicket(currentEvent.id, selectedTicketType.type);
-      if (result && result.paymentLink) {
-        // Redirect to payment page
-        window.location.href = result.paymentLink;
-      } else {
-        // Handle successful purchase that doesn't require redirect
-        navigate('/checkout', {
-          state: {
-            event: currentEvent,
-            ticket: {
-              type: selectedTicketType.type,
-              price: selectedTicketType.price,
-              quantity: ticketQuantity,
-            },
-          },
-        });
-      }
+      const typeToSend = String(selectedTicketType.type).toLowerCase().trim(); 
+    
+     await buyTicket(currentEvent.id, typeToSend, ticketQuantity);
+
     } catch (error) {
       toast.error('Failed to process ticket purchase');
     } finally {
@@ -197,7 +182,7 @@ const EventDetail = () => {
   // Calculate service fee and total
   const calculateServiceFee = () => {
     if (!selectedTicketType) return 0;
-    return selectedTicketType.price * ticketQuantity * 0.15;
+    return selectedTicketType.price * ticketQuantity * 0.05;
   };
 
   const calculateTotal = () => {

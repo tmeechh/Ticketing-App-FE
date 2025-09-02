@@ -26,7 +26,7 @@ const userRoutes = [
   {
     path: '/my-tickets',
     element: (
-      <ProtectedRoute requiredRole="organizer">
+      <ProtectedRoute>
         <MyTickets />
       </ProtectedRoute>
     ),

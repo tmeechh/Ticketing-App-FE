@@ -37,11 +37,11 @@ const LoginForm = ({ onSuccess, onRegisterClick }) => {
       </div>
       
       <div className="space-y-2">
-        <div className="flex justify-between">
+        <div className="flex justify-between ">
           <Label htmlFor="password" className="text-sm font-medium">Password</Label>
           <button 
             type="button" 
-            className="text-xs text-primary hover:text-primary/80 hover:underline transition-colors"
+            className="text-xs text-primary hover:text-primary/80 hover:underline cursor-pointer transition-colors"
             onClick={() => {/* Implement forgot password flow */}}
           >
             Forgot Password?

@@ -101,13 +101,13 @@ const Profile = () => {
                     </div>
                   </Link>
                    )}
-                  <Link to="/account-settings" className="flex items-center space-x-3 p-3 hover:bg-muted rounded-lg transition-colors cursor-pointer">
+                  {/* <Link to="/account-settings" className="flex items-center space-x-3 p-3 hover:bg-muted rounded-lg transition-colors cursor-pointer">
                     <Settings className="w-5 h-5 text-primary" />
                     <div>
                       <h3 className="font-medium">Account Settings</h3>
                       <p className="text-sm text-muted-foreground">Update your profile and preferences</p>
                     </div>
-                  </Link>
+                  </Link> */}
                 </div>
               </div>
             </div>
