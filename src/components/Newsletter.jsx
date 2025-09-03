@@ -26,7 +26,7 @@ const Newsletter = () => {
               Subscribe to our newsletter and never miss an event. Get personalized recommendations and early access to ticket sales.
             </p>
             
-            <form className="flex flex-col sm:flex-row gap-3 max-w-lg mx-auto">
+            <div className="flex flex-col sm:flex-row gap-3 max-w-lg mx-auto">
               <input 
                 type="email" 
                 placeholder="Enter your email address" 
@@ -34,15 +34,15 @@ const Newsletter = () => {
                 required
               />
               <button 
-                type="submit"
-                className="btn-accent h-12 whitespace-nowrap flex items-center justify-center"
+                type="button" 
+                className="btn-accent cursor-not-allowed h-12 whitespace-nowrap flex items-center justify-center"
               >
                 <span>Subscribe</span>
                 <svg className="ml-2 h-4 w-4" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
                   <path d="M13 5L20 12L13 19M4 12H20" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"/>
                 </svg>
               </button>
-            </form>
+            </div>
             
             <p className="text-sm text-white/60 mt-4">
               We respect your privacy. Unsubscribe at any time.

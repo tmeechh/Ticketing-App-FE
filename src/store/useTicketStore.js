@@ -14,16 +14,17 @@ const useTicketStore = create((set, get) => ({
     set({ isLoading: true });
     try {
       const response = await axios.get('/tickets/my-tickets');
-      const tickets = response.data;
+     const tickets = response.data.tickets || [];
 
-      // Split tickets into upcoming and past
-      const today = new Date();
-      const upcoming = tickets.filter(
-        (ticket) => new Date(ticket.eventDate) >= today
-      );
-      const past = tickets.filter(
-        (ticket) => new Date(ticket.eventDate) < today
-      );
+
+    const today = new Date();
+    const upcoming = tickets.filter(
+      (ticket) => new Date(ticket.event.date) >= today // 👈 note: event.date not eventDate
+    );
+    const past = tickets.filter(
+      (ticket) => new Date(ticket.event.date) < today
+    );
+
 
       set({
         tickets,
@@ -116,7 +117,7 @@ const useTicketStore = create((set, get) => ({
       await get().fetchUserTickets();
 
       set({ isLoading: false });
-      toast.success('Refund request processed successfully');
+     toast.success(response.data?.message || 'Refund processed successfully');
 
       return response.data;
     } catch (error) {

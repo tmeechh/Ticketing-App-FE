@@ -19,13 +19,13 @@ const TicketList = ({
         {/* Tabs */}
         <div className="flex border border-muted rounded-lg overflow-hidden bg-white shadow-sm mb-4 md:mb-0">
           <button
-            className={`px-6 py-3 text-sm font-medium transition-colors ${activeTab === 'upcoming' ? 'bg-primary text-white' : 'hover:bg-muted'}`}
+            className={`px-6 cursor-pointer py-3 text-sm font-medium transition-colors ${activeTab === 'upcoming' ? 'bg-primary text-white' : 'hover:bg-muted'}`}
             onClick={() => setActiveTab('upcoming')}
           >
             Upcoming
           </button>
           <button
-            className={`px-6 py-3 text-sm font-medium transition-colors ${activeTab === 'past' ? 'bg-primary text-white' : 'hover:bg-muted'}`}
+            className={`px-6 py-3 cursor-pointer  text-sm font-medium transition-colors ${activeTab === 'past' ? 'bg-primary text-white' : 'hover:bg-muted'}`}
             onClick={() => setActiveTab('past')}
           >
             Past Events

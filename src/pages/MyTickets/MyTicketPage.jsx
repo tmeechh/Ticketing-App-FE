@@ -22,11 +22,17 @@ const MyTicketsPage = () => {
     }
   }, [fetchUserTickets, isAuthenticated]);
 
-  // Filter tickets based on status and search term
-  const filteredTickets = (activeTab === 'upcoming' ? upcomingTickets : pastTickets).filter(ticket => 
-    (ticket.eventName.toLowerCase().includes(searchTerm.toLowerCase()) ||
-     ticket.eventLocation.toLowerCase().includes(searchTerm.toLowerCase()))
+ const search = searchTerm.toLowerCase();
+
+const filteredTickets = (activeTab === 'upcoming' ? upcomingTickets : pastTickets).filter(ticket => {
+  const eventName = ticket.event?.title || '';
+  const eventLocation = ticket.event?.location || '';
+  return (
+    eventName.toLowerCase().includes(search) ||
+    eventLocation.toLowerCase().includes(search)
   );
+});
+
   
   return (
     <div className="min-h-screen">

@@ -33,12 +33,27 @@ const EventDetail = () => {
   const [isPurchasing, setIsPurchasing] = useState(false);
   const [showCopied, setShowCopied] = useState(false);
 
-  const handleShare = () => {
+  const handleShare = async () => {
+  if (navigator.share) {
+    try {
+      await navigator.share({
+        title: document.title,
+        text: "Check out this event!",
+        url: window.location.href,
+      });
+      console.log("Content shared successfully");
+    } catch (error) {
+      console.error("Error sharing:", error);
+    }
+  } else {
+    // fallback: copy link
     navigator.clipboard.writeText(window.location.href).then(() => {
       setShowCopied(true);
       setTimeout(() => setShowCopied(false), 2000);
     });
-  };
+  }
+};
+
   const ticketTypes = currentEvent?.ticketPrices
     ? currentEvent.ticketPrices instanceof Map
       ? Object.fromEntries(currentEvent.ticketPrices)
@@ -231,7 +246,7 @@ const EventDetail = () => {
                 </div>
               </div>
               <div className="mt-6 md:mt-0 flex space-x-3">
-                <button className="flex items-center space-x-2 bg-white/10 hover:bg-white/20 backdrop-blur-sm py-2 px-4 rounded-full transition-colors">
+                {/* <button className="flex items-center space-x-2 bg-white/10 hover:bg-white/20 backdrop-blur-sm py-2 px-4 rounded-full transition-colors">
                   <svg
                     xmlns="http://www.w3.org/2000/svg"
                     width="20"
@@ -246,7 +261,7 @@ const EventDetail = () => {
                     <path d="M20.84 4.61a5.5 5.5 0 0 0-7.78 0L12 5.67l-1.06-1.06a5.5 5.5 0 0 0-7.78 7.78L12 21.23l8.84-8.84a5.5 5.5 0 0 0 0-7.78z"></path>
                   </svg>
                   <span>Save</span>
-                </button>
+                </button> */}
                 <div className="relative">
                   <button
                     onClick={handleShare}

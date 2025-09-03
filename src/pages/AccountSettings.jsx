@@ -1,6 +1,8 @@
 import React, { useEffect } from 'react'
 import { useNavigate } from 'react-router-dom';
 import useAuthStore from '@/store/authStore';
+import Navbar from '@/components/Navbar';
+import Footer from '@/components/Footer';
 
 const AccountSettings = () => {
     const navigate = useNavigate();
@@ -16,7 +18,8 @@ const AccountSettings = () => {
    
     }, [isAuthenticated, navigate,]);
   return (
-    <div>AccountSettings</div>
+    <div>
+      <Navbar/> AccountSettings<Footer/></div>
   )
 }
 
