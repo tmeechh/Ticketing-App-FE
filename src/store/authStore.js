@@ -186,6 +186,42 @@ const useAuthStore = create(
           return false;
         }
       },
+updateProfile: async (data, isFormData = false) => {
+  // set({ isLoading: true, error: null });
+  try {
+    const config = isFormData
+      ? { headers: { "Content-Type": "multipart/form-data" } }
+      : {};
+
+    const response = await axios.patch("/auth", data, config);
+
+    const updatedUser = response.data.data.user;
+
+    set({
+      user: updatedUser,
+      // isLoading: false,
+      error: null,
+    });
+
+  
+    toast.success(response.data.message || "Profile updated successfully");
+    return true;
+  } catch (error) {
+    set({
+      // isLoading: false,
+      error: error.response?.data?.message || "Failed to update profile",
+    });
+
+    toast.error(
+      error.response?.data?.message || "Failed to update profile"
+    );
+    return false;
+  }
+},
+
+
+
+
     }),
     {
       name: 'auth-storage',

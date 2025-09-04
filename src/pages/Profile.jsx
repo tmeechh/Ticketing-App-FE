@@ -1,15 +1,34 @@
-import React, { useEffect } from 'react';
+import React, { useEffect, useState, useRef } from 'react';
 import { Link, useNavigate } from 'react-router-dom';
 import Navbar from '@/components/Navbar';
 import Footer from '@/components/Footer';
-import { User, Ticket, Calendar, Clock, LogOut, Settings } from 'lucide-react';
+import {
+  User,
+  Ticket,
+  Calendar,
+  Clock,
+  LogOut,
+  Settings,
+  Edit2,
+  X,
+  Check,
+  Camera,
+} from 'lucide-react';
 import useAuthStore from '@/store/authStore';
 import useTicketStore from '@/store/useTicketStore';
 
 const Profile = () => {
   const navigate = useNavigate();
-  const { user, isAuthenticated, logout } = useAuthStore();
+  const { user, isAuthenticated, logout, updateProfile } = useAuthStore();
   const { upcomingTickets, fetchUserTickets, isLoading } = useTicketStore();
+
+  const [editingName, setEditingName] = useState(false);
+  const [newName, setNewName] = useState(user?.fullName || '');
+  const [isUpdatingName, setIsUpdatingName] = useState(false);
+  const [isUpdatingImage, setIsUpdatingImage] = useState(false);
+
+  const [previewImage, setPreviewImage] = useState(null);
+  const fileInputRef = useRef(null);
 
   useEffect(() => {
     if (!isAuthenticated) {
@@ -23,6 +42,36 @@ const Profile = () => {
   const handleLogout = () => {
     logout();
     navigate('/');
+  };
+
+  // Handle name update
+  const handleUpdateName = async () => {
+    setIsUpdatingName(true);
+    const success = await updateProfile({ fullName: newName });
+    setIsUpdatingName(false);
+
+    if (success) setEditingName(false);
+  };
+
+  // Handle image upload preview
+  const handleImageChange = (e) => {
+    const file = e.target.files[0];
+    if (file) {
+      const url = URL.createObjectURL(file);
+      setPreviewImage({ file, url });
+    }
+  };
+
+  const handleSaveImage = async () => {
+    if (!previewImage?.file) return;
+    const formData = new FormData();
+    formData.append('image', previewImage.file);
+
+    setIsUpdatingImage(true);
+    const success = await updateProfile(formData, true);
+    setIsUpdatingImage(false);
+
+    if (success) setPreviewImage(null);
   };
 
   // if (!isAuthenticated || !user) {
@@ -61,8 +110,14 @@ const Profile = () => {
             <div className="lg:col-span-1">
               <div className="premium-card h-full">
                 <div className="flex flex-col items-center text-center mb-8">
-                  <div className="w-24 h-24 bg-primary/20 rounded-full flex items-center justify-center mb-4">
-                    {user?.image ? (
+                  <div className="w-24 h-24 bg-primary/20 rounded-full flex items-center justify-center mb-4 relative">
+                    {previewImage ? (
+                      <img
+                        src={previewImage.url}
+                        alt="Preview"
+                        className="w-full h-full rounded-full object-cover"
+                      />
+                    ) : user?.image ? (
                       <img
                         src={user.image}
                         alt="User profile"
@@ -71,8 +126,86 @@ const Profile = () => {
                     ) : (
                       <User className="w-12 h-12 text-primary" />
                     )}
+
+                    {/* Camera icon for upload */}
+                    <button
+                      onClick={() => fileInputRef.current.click()}
+                      className="absolute  bg-primary cursor-pointer text-white p-1 rounded-full"
+                    >
+                      <Camera className="w-4 h-4" />
+                    </button>
+                    <input
+                      type="file"
+                      accept="image/*"
+                      ref={fileInputRef}
+                      className="hidden"
+                      onChange={handleImageChange}
+                    />
                   </div>
-                  <h2 className="text-2xl font-bold">{user?.fullName}</h2>
+
+                  {/* Save image button */}
+                  {previewImage && (
+                    <div className="flex space-x-2 mt-2">
+                      <button
+                        onClick={handleSaveImage}
+                        disabled={isUpdatingImage}
+                        className="px-3 py-1 bg-primary text-green-600 cursor-pointer rounded-lg flex items-center"
+                      >
+                        {isUpdatingImage ? (
+                          <span className="animate-spin h-4 w-4 border-2 border-green-600 border-t-transparent rounded-full mr-1" />
+                        ) : (
+                          <Check className="w-4 h-4 mr-1" />
+                        )}
+                        {isUpdatingImage ? 'Saving...' : 'Save'}
+                      </button>
+                      <button
+                        onClick={() => setPreviewImage(null)}
+                        disabled={isUpdatingImage}
+                        className="px-3 py-1 bg-muted text-red-600 cursor-pointer rounded-lg flex items-center"
+                      >
+                        <X className="w-4 h-4 mr-1" /> Cancel
+                      </button>
+                    </div>
+                  )}
+
+                  {/* Name editing */}
+                  {editingName ? (
+                    <div className="flex items-center space-x-2 mt-2">
+                      <input
+                        type="text"
+                        value={newName}
+                        onChange={(e) => setNewName(e.target.value)}
+                        className="border rounded px-2 py-1"
+                      />
+                      <button
+                        onClick={handleUpdateName}
+                        disabled={isUpdatingName}
+                        className="px-2 py-1 bg-primary text-green-600 cursor-pointer rounded flex items-center"
+                      >
+                        {isUpdatingName ? (
+                          <span className="animate-spin h-4 w-4 border-2 border-green-600 border-t-transparent rounded-full mr-1" />
+                        ) : null}
+                        Save
+                      </button>
+                      <button
+                        onClick={() => setEditingName(false)}
+                        className="px-2 py-1 bg-muted text-red-600 cursor-pointer rounded"
+                      >
+                        Cancel
+                      </button>
+                    </div>
+                  ) : (
+                    <div className="flex items-center mt-2">
+                      <h2 className="text-2xl font-bold">{user?.fullName}</h2>
+                      <button
+                        onClick={() => setEditingName(true)}
+                        className="ml-2 cursor-pointer text-primary"
+                      >
+                        <Edit2 className="w-4 h-4" />
+                      </button>
+                    </div>
+                  )}
+
                   <p className="text-muted-foreground">{user?.email}</p>
                 </div>
 

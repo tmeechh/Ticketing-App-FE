@@ -42,8 +42,13 @@ const NavActions = ({ isScrolled, openLogin, openSignup, handleLogout, navigate 
             className={`flex items-center space-x-2 cursor-pointer ${profileColor}`}
             onClick={onProfileClick}
           >
-            <User size={18} />
-            <span>{user?.name || 'Profile'}</span>
+            {/* <User size={18} /> */}
+            {/* <span>{user?.image || 'Profile'}</span> */}
+             <img
+                        src={user?.image || 'Profile'}
+                        alt="Preview"
+                        className="w-full h-full rounded-full object-cover"
+                      />
           </Button>
           <Button 
             variant="outline"
