@@ -3,7 +3,7 @@ import ProtectedRoute from '@/components/Route/ProtectedRoute';
 
 const Profile = lazy(() => import('@/pages/Profile'));
 const AccountSettings = lazy(() => import('@/pages/AccountSettings'));
-const MyTickets = lazy(() => import('@/pages/MyTickets'));
+const MyTickets = lazy(() => import('@/pages/MyTickets/index.jsx'));
 const MyEvents = lazy(() => import('@/pages/OrganizerEvents'));
 
 const userRoutes = [
