@@ -11,9 +11,6 @@ const useAuthStore = create(
       isAuthenticated: false,
       isLoading: false,
       error: null,
-    
-
-     
 
       // Login user
       login: async (email, password) => {
@@ -31,7 +28,6 @@ const useAuthStore = create(
             isAuthenticated: true,
             isLoading: false,
           });
-         
 
           toast.success('Successfully logged in!');
           return true;
@@ -108,7 +104,7 @@ const useAuthStore = create(
 
       // Logout user
       logout: () => {
-        localStorage.removeItem('token'); 
+        localStorage.removeItem('token');
         set({
           user: null,
           token: null,
@@ -119,31 +115,30 @@ const useAuthStore = create(
       },
 
       // Get current user profile
-          // Update getCurrentUser
-          getCurrentUser: async () => {
-            set({ isLoading: true });
-            try {
-              const response = await axios.get("/auth");
-              set({
-                user: response.data.data.user,
-                isAuthenticated: true,
-                isLoading: false,
-              });
-              return response.data.data.user;
-            } catch (error) {
-              // Clear both state and localStorage on error
-              set({
-                isLoading: false,
-                user: null,
-                token: null,
-                isAuthenticated: false,
-              });
-              localStorage.removeItem('token');
-              localStorage.removeItem('auth-storage'); // Clear Zustand's persisted state
-              return null;
-            }
-          },
-      
+     
+      getCurrentUser: async () => {
+        set({ isLoading: true });
+        try {
+          const response = await axios.get('/auth');
+          set({
+            user: response.data.data.user,
+            isAuthenticated: true,
+            isLoading: false,
+          });
+          return response.data.data.user;
+        } catch (error) {
+          // Clear both state and localStorage on error
+          set({
+            isLoading: false,
+            user: null,
+            token: null,
+            isAuthenticated: false,
+          });
+          localStorage.removeItem('token');
+          localStorage.removeItem('auth-storage'); // Clear Zustand's persisted state
+          return null;
+        }
+      },
 
       // Reset password request
       forgotPassword: async (email) => {
@@ -167,10 +162,10 @@ const useAuthStore = create(
       },
 
       // Reset password with OTP
-      resetPassword: async (email, newPassword, otp) => {
+      resetPassword: async (email, password, otp) => {
         set({ isLoading: true, error: null });
         try {
-          await axios.post('/auth/reset-password', { email, newPassword, otp });
+          await axios.post('/auth/reset-password', { email, password, otp });
           set({ isLoading: false });
           toast.success('Password has been reset successfully');
           return true;
@@ -186,42 +181,39 @@ const useAuthStore = create(
           return false;
         }
       },
-updateProfile: async (data, isFormData = false) => {
-  // set({ isLoading: true, error: null });
-  try {
-    const config = isFormData
-      ? { headers: { "Content-Type": "multipart/form-data" } }
-      : {};
+      updateProfile: async (data, isFormData = false) => {
+        // set({ isLoading: true, error: null });
+        try {
+          const config = isFormData
+            ? { headers: { 'Content-Type': 'multipart/form-data' } }
+            : {};
 
-    const response = await axios.patch("/auth", data, config);
+          const response = await axios.patch('/auth', data, config);
 
-    const updatedUser = response.data.data.user;
+          const updatedUser = response.data.data.user;
 
-    set({
-      user: updatedUser,
-      // isLoading: false,
-      error: null,
-    });
+          set({
+            user: updatedUser,
+            // isLoading: false,
+            error: null,
+          });
 
-  
-    toast.success(response.data.message || "Profile updated successfully");
-    return true;
-  } catch (error) {
-    set({
-      // isLoading: false,
-      error: error.response?.data?.message || "Failed to update profile",
-    });
+          toast.success(
+            response.data.message || 'Profile updated successfully'
+          );
+          return true;
+        } catch (error) {
+          set({
+            // isLoading: false,
+            error: error.response?.data?.message || 'Failed to update profile',
+          });
 
-    toast.error(
-      error.response?.data?.message || "Failed to update profile"
-    );
-    return false;
-  }
-},
-
-
-
-
+          toast.error(
+            error.response?.data?.message || 'Failed to update profile'
+          );
+          return false;
+        }
+      },
     }),
     {
       name: 'auth-storage',
@@ -230,7 +222,6 @@ updateProfile: async (data, isFormData = false) => {
         token: state.token,
         isAuthenticated: state.isAuthenticated,
       }),
-     
     }
   )
 );

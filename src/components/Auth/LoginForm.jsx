@@ -6,7 +6,7 @@ import { Button } from "@/components/ui/button";
 import { Eye, EyeOff, Loader } from 'lucide-react';
 import useAuthStore from '@/store/authStore';
 
-const LoginForm = ({ onSuccess, onRegisterClick }) => {
+const LoginForm = ({ onSuccess, onRegisterClick, onForgotClick }) => {
   const [email, setEmail] = useState('');
   const [password, setPassword] = useState('');
   const [showPassword, setShowPassword] = useState(false);
@@ -42,7 +42,7 @@ const LoginForm = ({ onSuccess, onRegisterClick }) => {
           <button 
             type="button" 
             className="text-xs text-primary hover:text-primary/80 hover:underline cursor-pointer transition-colors"
-            onClick={() => {/* Implement forgot password flow */}}
+            onClick={onForgotClick}
           >
             Forgot Password?
           </button>
