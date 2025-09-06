@@ -115,7 +115,9 @@ Push (git push origin feature/amazing-feature)
 
 Open a Pull Request
 
-📜 License
+```
+
+## 📜 License
 
 This project is licensed under the MIT License.
 
