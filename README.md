@@ -49,39 +49,41 @@ src/
  ├── main.jsx         # Entry point
  └── index.css        # Tailwind base + custom styles
 
-⚙️ Installation & Setup
+ ```
 
-Clone the repository
+## ⚙️ Installation & Setup
 
-git clone https://github.com/your-username/eventhorizon-frontend.git
-cd eventhorizon-frontend
+- Clone the repository
+
+git clone https://github.com/tmeechh/Ticketing-App-FE.git
 
 
-Install dependencies
+
+- Install dependencies
 
 npm install
 
 
-Create a .env file
+- Create a .env file
 
 VITE_API_BASE_URL=http://localhost:5000/api
 
 
-Run development server
+- Run development server
 
 npm run dev
 
 
-Build for production
+- Build for production
 
 npm run build
 
 
-Preview production build
+- Preview production build
 
 npm run preview
 
-🌍 Deployment
+- 🌍 Deployment
 
 The project is optimized for Vercel:
 
@@ -93,7 +95,7 @@ Add environment variables in dashboard
 
 Deploy 🚀
 
-🔒 Authentication Flow
+### 🔒 Authentication Flow
 
 Users can sign up / log in
 
@@ -101,7 +103,7 @@ OTP verification ensures account security
 
 Protected routes with role-based access (Users vs Organizers)
 
-👨‍💻 Contributing
+### 👨‍💻 Contributing
 
 Contributions are welcome!
 
@@ -115,7 +117,7 @@ Push (git push origin feature/amazing-feature)
 
 Open a Pull Request
 
-```
+
 
 ## 📜 License
 
