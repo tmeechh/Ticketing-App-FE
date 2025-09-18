@@ -11,7 +11,7 @@ The frontend is designed with a **clean UI, smooth user experience, and fast per
 
 - 🎟 **Ticketing System** – Buy and manage event tickets (General, VIP, Premium)  
 - 🗓 **Event Management** – Organizers can create and update events  
-- 🔐 **Authentication & Authorization** – Role-based access (User / Organizer)  
+- 🔐 **Authentication & Authorization** – Role-based access (User / Organizer/ Admin)  
 - 💳 **Payments** – Integrated with Paystack (test mode ready)  
 - 📩 **OTP Verification** – Extra layer of account security  
 - 💸 **Refund Policy** – Refund rules enforced (e.g., no refunds within 14 days of an event)  
@@ -32,6 +32,8 @@ The frontend is designed with a **clean UI, smooth user experience, and fast per
 - **Date Utilities**: [date-fns](https://date-fns.org/)  
 - **HTTP Client**: [Axios](https://axios-http.com/)  
 - **Notifications**: [Sonner](https://sonner.emilkowal.ski/)  
+-  **Charts & Data Visualization**: [Recharts](https://recharts.org/en-US/)  
+
 
 ---
 
