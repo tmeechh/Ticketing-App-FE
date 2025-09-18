@@ -10,6 +10,7 @@ const useAuthStore = create(
       token: null,
       isAuthenticated: false,
       isLoading: false,
+      
       error: null,
 
       // Login user
@@ -20,17 +21,19 @@ const useAuthStore = create(
             email,
             password,
           });
-          const { token, user } = response.data.data;
+          const { token, user, roles, isAdmin } = response.data.data;
 
           set({
             user,
             token,
             isAuthenticated: true,
+            isAdmin,
             isLoading: false,
           });
 
           toast.success('Successfully logged in!');
-          return true;
+          // return true;
+          return { success: true, isAdmin, roles, user };
         } catch (error) {
           set({
             isLoading: false,
@@ -109,13 +112,14 @@ const useAuthStore = create(
           user: null,
           token: null,
           isAuthenticated: false,
+          isAdmin: false,
         });
 
         toast.info('You have been logged out');
       },
 
       // Get current user profile
-     
+
       getCurrentUser: async () => {
         set({ isLoading: true });
         try {
@@ -221,6 +225,7 @@ const useAuthStore = create(
         user: state.user,
         token: state.token,
         isAuthenticated: state.isAuthenticated,
+        isAdmin: state.isAdmin, 
       }),
     }
   )

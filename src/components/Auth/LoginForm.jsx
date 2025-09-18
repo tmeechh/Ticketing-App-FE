@@ -5,21 +5,50 @@ import { Label } from "@/components/ui/label";
 import { Button } from "@/components/ui/button";
 import { Eye, EyeOff, Loader } from 'lucide-react';
 import useAuthStore from '@/store/authStore';
+import { useNavigate } from 'react-router-dom';
 
 const LoginForm = ({ onSuccess, onRegisterClick, onForgotClick }) => {
   const [email, setEmail] = useState('');
   const [password, setPassword] = useState('');
   const [showPassword, setShowPassword] = useState(false);
+  const navigate = useNavigate();
   
-  const { login, isLoading } = useAuthStore();
+  const { login, isLoading,  isAdmin, user } = useAuthStore();
 
+//   const handleSubmit = async (e) => {
+//     e.preventDefault();
+//     const success = await login(email, password);
+//     // if (success && onSuccess) {
+//     //   onSuccess();
+//     // }
+//    if (success) {
+//     if (onSuccess) onSuccess();
+//     if (isAdmin) {
+//       navigate("/admin/dashboard");
+//     } else if (user?.roles?.includes("organizer")) {
+//       navigate("/");
+//     } else {
+//       navigate("/"); // normal user landing
+//     }
+//   }
+// };
   const handleSubmit = async (e) => {
-    e.preventDefault();
-    const success = await login(email, password);
-    if (success && onSuccess) {
-      onSuccess();
+  e.preventDefault();
+  const result = await login(email, password);
+
+  if (result?.success) {
+    if (onSuccess) onSuccess();
+
+    if (result.isAdmin) {
+      navigate("/admin/dashboard");
+    } else if (result.user?.roles?.includes("organizer")) {
+      navigate("/"); // organizer homepage
+    } else {
+      navigate("/"); // normal user homepage
     }
-  };
+  }
+};
+
 
   return (
     <form onSubmit={handleSubmit} className="space-y-5">

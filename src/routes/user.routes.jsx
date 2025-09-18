@@ -2,7 +2,6 @@ import { lazy } from 'react';
 import ProtectedRoute from '@/components/Route/ProtectedRoute';
 
 const Profile = lazy(() => import('@/pages/Profile'));
-const AccountSettings = lazy(() => import('@/pages/AccountSettings'));
 const MyTickets = lazy(() => import('@/pages/MyTickets/Index.jsx'));
 const MyEvents = lazy(() => import('@/pages/OrganizerEvents'));
 
@@ -12,14 +11,6 @@ const userRoutes = [
     element: (
       <ProtectedRoute>
         <Profile />
-      </ProtectedRoute>
-    ),
-  },
-  {
-    path: '/account-settings',
-    element: (
-      <ProtectedRoute>
-        <AccountSettings />
       </ProtectedRoute>
     ),
   },

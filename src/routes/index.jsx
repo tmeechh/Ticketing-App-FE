@@ -5,6 +5,7 @@ import eventRoutes from './event.routes';
 // import authRoutes from './auth.routes';
 import userRoutes from './user.routes';
 import publicRoutes from './public.routes';
+import adminRoutes from './admin.routes'; 
 
 const NotFound = lazy(() => import('@/pages/NotFound'));
 
@@ -20,7 +21,9 @@ const Router = () => (
         <Route key={route.path} {...route} />
       ))}
       
-    
+    {adminRoutes.map((route) => (
+        <Route key={route.path} {...route} />
+      ))}
       
       {/* Event Routes */}
       {eventRoutes.map((route) => (
