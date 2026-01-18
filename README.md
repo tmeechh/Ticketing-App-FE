@@ -1,128 +1,226 @@
-# 🚀 EventHorizon Frontend
+# 🎟️ EventHorizon Frontend
 
-EventHorizon is a modern **event ticketing web application** built with **React + Vite**.  
-It allows **organizers** to create and manage events, while **users** can explore, purchase, and manage tickets.  
-
-The frontend is designed with a **clean UI, smooth user experience, and fast performance** in mind.  
+EventHorizon is a modern **ticketing and event management platform** built with React and Vite.  
+Users can browse events, purchase tickets, and manage their bookings with a seamless, responsive interface.
 
 ---
 
 ## ✨ Features
 
-- 🎟 **Ticketing System** – Buy and manage event tickets (General, VIP, Premium)  
-- 🗓 **Event Management** – Organizers can create and update events  
-- 🔐 **Authentication & Authorization** – Role-based access (User / Organizer/ Admin)  
-- 💳 **Payments** – Integrated with Paystack (test mode ready)  
-- 📩 **OTP Verification** – Extra layer of account security  
-- 💸 **Refund Policy** – Refund rules enforced (e.g., no refunds within 14 days of an event)  
-- 📊 **State Management** – Powered by Zustand  
-- ⚡ **Fast & Optimized** – React 19 + Vite for blazing speed  
+- 👤 **User Authentication**
+  - Email & password registration with OTP verification
+  - Secure JWT-based login
+  - Password reset functionality
+  - Profile management with image upload
+
+- 🎟️ **Event Discovery**
+  - Browse upcoming events by category
+  - Search and filter events
+  - View detailed event information
+  - Automatic filtering of past/outdated events
+  - Featured events showcase
+
+- 🛒 **Ticket Purchase**
+  - Multiple ticket types (General, VIP, Premium)
+  - Secure Paystack payment integration
+  - Real-time ticket availability tracking
+  - Purchase history and ticket management
+  - Automatic prevention of purchases for past events
+
+- 📱 **Responsive Design**
+  - Mobile-first approach
+  - Modern UI with Tailwind CSS
+  - Smooth animations and transitions
+  - Optimized for all screen sizes
+
+- 🎨 **Organizer Features** (Admin-Assigned Only)
+  - Create and manage events
+  - Upload multiple event images (up to 5)
+  - Set ticket prices and availability
+  - Track event performance
+  - Currently restricted to admin-assigned organizer accounts
 
 ---
 
 ## 🛠 Tech Stack
 
-- **Framework**: [React 19](https://react.dev/) + [Vite](https://vitejs.dev/)  
-- **Routing**: [React Router v7](https://reactrouter.com/)  
-- **Styling**: [TailwindCSS v4](https://tailwindcss.com/)  
-- **Icons**: [Lucide React](https://lucide.dev/)  
-- **UI Primitives**: [Radix UI](https://www.radix-ui.com/)  
-- **State Management**: [Zustand](https://zustand-demo.pmnd.rs/)  
-- **Data Fetching**: [TanStack React Query](https://tanstack.com/query)  
-- **Date Utilities**: [date-fns](https://date-fns.org/)  
-- **HTTP Client**: [Axios](https://axios-http.com/)  
-- **Notifications**: [Sonner](https://sonner.emilkowal.ski/)  
--  **Charts & Data Visualization**: [Recharts](https://recharts.org/en-US/)  
-
+- **Framework**: [React 18](https://react.dev/) with [Vite](https://vitejs.dev/)
+- **Routing**: [React Router v6](https://reactrouter.com/)
+- **State Management**: [Zustand](https://github.com/pmndrs/zustand)
+- **Styling**: [Tailwind CSS](https://tailwindcss.com/)
+- **UI Components**: [shadcn/ui](https://ui.shadcn.com/)
+- **HTTP Client**: [Axios](https://axios-http.com/)
+- **Notifications**: [Sonner](https://sonner.emilkowal.ski/)
+- **Icons**: [Lucide React](https://lucide.dev/)
+- **Date Handling**: [date-fns](https://date-fns.org/)
 
 ---
 
 ## 📂 Project Structure
-
 ```bash
-src/
- ├── assets/          # Static assets (images, icons, etc.)
- ├── components/      # Reusable UI components
- ├── pages/           # App pages (Profile, Events, Tickets, etc.)
- ├── routes/          # Route definitions and protection
- ├── store/           # Zustand store (state management)
- ├── utils/           # Helpers and utilities
- ├── App.jsx          # Main app component
- ├── main.jsx         # Entry point
- └── index.css        # Tailwind base + custom styles
+.
+├── public/               # Static assets
+├── src/
+│   ├── components/       # Reusable UI components
+│   │   ├── ui/          # shadcn/ui components
+│   │   ├── Navbar.jsx   # Navigation bar
+│   │   ├── Footer.jsx   # Footer component
+│   │   └── ...
+│   ├── lib/             # Utility functions
+│   │   └── axiosConfig.js
+│   ├── pages/           # Route pages
+│   │   ├── Home.jsx
+│   │   ├── Events.jsx
+│   │   ├── EventDetails.jsx
+│   │   ├── CreateEvent.jsx
+│   │   └── ...
+│   ├── store/           # Zustand state management
+│   │   ├── authStore.js
+│   │   └── useEventStore.js
+│   ├── App.jsx          # Main app component
+│   ├── main.jsx         # Entry point
+│   └── index.css        # Global styles
+├── .env                 # Environment variables
+├── .gitignore
+├── package.json
+├── vite.config.js
+└── README.md
+```
 
- ```
+---
 
 ## ⚙️ Installation & Setup
 
-- Clone the repository
+### 🔽 Clone the repository
+```bash
+git clone https://github.com/yourusername/eventhorizon-frontend.git
+cd eventhorizon-frontend
+```
 
-git clone https://github.com/tmeechh/Ticketing-App-FE.git
-
-
-
-- Install dependencies
-
+### 📦 Install dependencies
+```bash
 npm install
+```
 
+### 🔧 Environment Variables
 
-- Create a .env file
+Create a `.env` file in the root directory:
+```env
+VITE_API_BASE_URL=http://localhost:5000/api/v1
+# Or your production API URL
+# VITE_API_BASE_URL=https://your-backend-url.com/api/v1
+```
 
-VITE_API_BASE_URL=http://localhost:5000/api
-
-
-- Run development server
-
+### 🚀 Run Development Server
+```bash
 npm run dev
+```
 
+The app will be available at: http://localhost:5173
 
-- Build for production
-
+### 🏗️ Build for Production
+```bash
 npm run build
+```
 
-
-- Preview production build
-
+### 👀 Preview Production Build
+```bash
 npm run preview
+```
 
-- 🌍 Deployment
+---
 
-The project is optimized for Vercel:
+## 📝 User Roles & Access
 
-Push to GitHub/GitLab/Bitbucket
+### Current Implementation
+- **Regular Users**: All new signups are automatically assigned the "user" role
+  - Browse and search events
+  - Purchase tickets
+  - Manage their bookings
+  - Update profile information
 
-Connect repo on Vercel
+- **Organizers**: Currently only manually assigned by administrators
+  - All regular user capabilities
+  - Create and manage events
+  - Set ticket prices and availability
+  - Upload event images and details
 
-Add environment variables in dashboard
+### Future Enhancement
+The codebase includes functionality (currently commented out) to allow users to choose their role during signup. This can be enabled when the platform opens up event creation to all users.
 
-Deploy 🚀
+---
 
-### 🔒 Authentication Flow
+## 🔑 Key Features Explained
 
-Users can sign up / log in
+### Event Management
+- Events are automatically marked as "outdated" when their date passes
+- Only upcoming events are displayed to users
+- Ticket purchases are blocked for past events
 
-OTP verification ensures account security
+### Image Handling
+- Support for multiple event images (up to 5)
+- Preview before upload
+- Individual image removal
+- Automatic upload to Cloudinary via backend
 
-Protected routes with role-based access (Users vs Organizers)
+### Payment Flow
+1. User selects tickets and quantity
+2. Payment initialized with Paystack
+3. User redirected to Paystack payment page
+4. Payment verified on return
+5. Ticket status updated automatically
 
-### 👨‍💻 Contributing
+---
 
-Contributions are welcome!
+## 🎨 Customization
 
-Fork the repo
+### Tailwind Configuration
+Customize colors, fonts, and other design tokens in `tailwind.config.js`
 
-Create a branch (git checkout -b feature/amazing-feature)
+### Component Library
+UI components are built with shadcn/ui and can be customized in `src/components/ui/`
 
-Commit your changes (git commit -m 'Add amazing feature')
+---
 
-Push (git push origin feature/amazing-feature)
+## 🚀 Deployment
 
-Open a Pull Request
+### Vercel (Recommended)
+```bash
+npm run build
+# Deploy the 'dist' folder to Vercel
+```
 
+### Netlify
+```bash
+npm run build
+# Deploy the 'dist' folder to Netlify
+```
 
+### Environment Variables
+Don't forget to set `VITE_API_BASE_URL` in your deployment platform's environment settings.
+
+---
+
+## 🤝 Contributing
+
+1. Fork the repository
+2. Create your feature branch (`git checkout -b feature/AmazingFeature`)
+3. Commit your changes (`git commit -m 'Add some AmazingFeature'`)
+4. Push to the branch (`git push origin feature/AmazingFeature`)
+5. Open a Pull Request
+
+---
 
 ## 📜 License
 
 This project is licensed under the MIT License.
 
-🔥 Built with love, React, and caffeine.
+---
+
+## 📧 Support
+
+For support, email support@eventhorizon.com or open an issue on GitHub.
+
+---
+
+🎉 **EventHorizon** - Your Gateway to Unforgettable Events!

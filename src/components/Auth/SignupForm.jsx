@@ -6,7 +6,7 @@ import { Eye, EyeOff, Loader } from 'lucide-react';
 import useAuthStore from '../../store/authStore';
 
 const SignupForm = ({ onSuccess, onLoginClick }) => {
-  const [roles, setRole] = useState(null); // null → not selected yet
+  // const [roles, setRole] = useState(null); // null → not selected yet
   const [formData, setFormData] = useState({
     fullName: '',
     email: '',
@@ -31,7 +31,9 @@ const SignupForm = ({ onSuccess, onLoginClick }) => {
     }
 
     const { fullName, email, password } = formData;
-    const success = await register({ fullName, email, password, roles: [roles] });
+
+    const success = await register({ fullName, email, password });
+    // const success = await register({ fullName, email, password, roles: [roles] });
 
     if (success && onSuccess) {
       onSuccess(email);
@@ -39,37 +41,37 @@ const SignupForm = ({ onSuccess, onLoginClick }) => {
   };
 
   // Step 1: Role selector
-  if (!roles) {
-    return (
-      <div className="space-y-6 text-center">
-        <h3 className="text-lg font-semibold text-gray-800">Join as</h3>
-        <div className="flex gap-4 justify-center">
-          <button
-            onClick={() => setRole('user')}
-            className="bg-gray-100 hover:bg-gray-200 text-black cursor-pointer py-2 px-4 rounded-md border border-gray-300"
-          >
-           Guest
-          </button>
-          <button
-            onClick={() => setRole('organizer')}
-            className="bg-[hsl(266,35%,23%)] hover:bg-[hsl(266,35%,20%)] cursor-pointer text-white py-2 px-4 rounded-md"
-          >
-            Organizer
-          </button>
-        </div>
-      </div>
-    );
-  }
+  // if (!roles) {
+  //   return (
+  //     <div className="space-y-6 text-center">
+  //       <h3 className="text-lg font-semibold text-gray-800">Join as</h3>
+  //       <div className="flex gap-4 justify-center">
+  //         <button
+  //           onClick={() => setRole('user')}
+  //           className="bg-gray-100 hover:bg-gray-200 text-black cursor-pointer py-2 px-4 rounded-md border border-gray-300"
+  //         >
+  //          Guest
+  //         </button>
+  //         <button
+  //           onClick={() => setRole('organizer')}
+  //           className="bg-[hsl(266,35%,23%)] hover:bg-[hsl(266,35%,20%)] cursor-pointer text-white py-2 px-4 rounded-md"
+  //         >
+  //           Organizer
+  //         </button>
+  //       </div>
+  //     </div>
+  //   );
+  // }
 
   // Step 2: Signup form
   return (
     <form onSubmit={handleSubmit} className="space-y-4">
-      <div className="text-sm text-gray-500 text-center mb-2">
+      {/* <div className="text-sm text-gray-500 text-center mb-2">
         Signing up as <span className="font-medium text-primary">{roles === 'organizer' ? 'Organizer' : 'Ticket Buyer'}</span>
         <button onClick={() => setRole(null)} type="button" className="ml-2 text-xs underline cursor-pointer text-gray-400 hover:text-gray-600">
           Change
         </button>
-      </div>
+      </div> */}
 
       <div className="space-y-2">
         <Label htmlFor="name">Full Name</Label>

@@ -21,13 +21,14 @@ const useAuthStore = create(
             email,
             password,
           });
-          const { token, user, roles, isAdmin } = response.data.data;
+          const { token, user, roles, isAdmin, isOrganizer } = response.data.data;
 
           set({
             user,
             token,
             isAuthenticated: true,
             isAdmin,
+             isOrganizer,
             isLoading: false,
           });
 
@@ -226,6 +227,7 @@ const useAuthStore = create(
         token: state.token,
         isAuthenticated: state.isAuthenticated,
         isAdmin: state.isAdmin, 
+          isOrganizer: state.isOrganizer,
       }),
     }
   )
