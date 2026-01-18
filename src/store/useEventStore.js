@@ -16,10 +16,18 @@ const useEventStore = create((set, get) => ({
     set({ isLoading: true });
     try {
       const response = await axios.get('/events');
-      const events = response.data.events;
+      const allEvents = response.data.events;
+    
+    // Filter out outdated events
+    const events = allEvents.filter(event => !event.isOutdated);
+    
+    // Extract featured and upcoming events
+    const featured = events.slice(0, 4);
+      // const events = response.data.events;
       
-      // Extract featured and upcoming events
-      const featured = events.slice(0, 4);
+      // // Extract featured and upcoming events
+      // const featured = events.slice(0, 4);
+
 
       // const featured = events.filter(event => event.featured === true);
       

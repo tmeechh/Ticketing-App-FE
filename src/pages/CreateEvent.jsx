@@ -70,6 +70,13 @@ const CreateEvent = () => {
   const handleImageChange = (e) => {
     const files = Array.from(e.target.files);
 
+    //  Check if adding new files would exceed the limit
+  if (images.length + files.length > 5) {
+    toast.error('You can only upload a maximum of 5 images');
+    return;
+  }
+
+
     // Append new files to existing ones
     setImages((prevImages) => [...prevImages, ...files]);
 
@@ -87,6 +94,13 @@ const CreateEvent = () => {
       setPreviewUrls((prevPreviews) => [...prevPreviews, ...newPreviewUrls]);
     });
   };
+
+  // Adding this new function to remove images
+const handleRemoveImage = (index) => {
+  // Remove from both images and preview URLs
+  setImages((prevImages) => prevImages.filter((_, idx) => idx !== index));
+  setPreviewUrls((prevPreviews) => prevPreviews.filter((_, idx) => idx !== index));
+};
 
   // Handle form input changes
   const handleChange = (e) => {
@@ -633,9 +647,7 @@ const CreateEvent = () => {
                                 type="button"
                                 onClick={(e) => {
                                   e.stopPropagation(); // Prevent triggering the file input
-                                  const newUrls = [...previewUrls];
-                                  newUrls.splice(idx, 1);
-                                  setPreviewUrls(newUrls);
+                          handleRemoveImage(idx); 
                                 }}
                                 className="absolute top-2 right-2 bg-red-500 text-white rounded-full w-6 h-6 flex items-center justify-center hover:bg-red-600 transition-colors"
                               >
@@ -645,7 +657,7 @@ const CreateEvent = () => {
                           ))}
                           <div className="col-span-2 flex justify-between items-center">
                             <p className="text-sm text-muted-foreground">
-                              Click to add more images
+                              Click to add more images ({images.length}/5)
                             </p>
                           </div>
                         </div>

@@ -104,7 +104,7 @@ const Hero = () => {
                   • {event?.location || "No location"}
                 </p>
               </div>
-              <Link to={`/events/${event?._id}`} className="btn-accent">
+              <Link to={`/events/${event?._id}`} className="btn-accent whitespace-nowrap ">
                 Book Now
               </Link>
             </div>
