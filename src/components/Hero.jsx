@@ -1,7 +1,7 @@
 import React, { useEffect } from 'react';
 import { Link } from 'react-router-dom';
 import { ArrowRight } from 'lucide-react';
-import heroImage from '../assets/cup.jpg';
+import heroImage from '../assets/event.png';
 import useEventStore from '@/store/useEventStore';
 
 const Hero = () => {
@@ -23,7 +23,7 @@ const Hero = () => {
           backgroundImage: `url(${heroImage})`,
         }}
       >
-        <div className="absolute inset-0 bg-black/40"></div>
+        <div className="absolute inset-0 bg-black/50"></div>
       </div>
 
       <div className=" mx-2 px-4 relative z-10 py-24 md:py-0">
